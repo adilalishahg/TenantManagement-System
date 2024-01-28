@@ -34,10 +34,14 @@
 
 								<select class="form-select" id="tower" name="tower">
 									<option value="">Select Tower</option>
-									<option value="1" <?php echo set_select('tower', '1', isset($tower) && $tower == '1'); ?>>
-										Luxury</option>
-									<option value="2" <?php echo set_select('tower', '2', isset($tower) && $tower == '2'); ?>>
-										Simple</option>
+									<?php
+									if (isset($towers)) {
+										foreach ($towers as $tower) {
+											echo '<option value="' . $tower['id'] . '" ' . set_select('tower', $tower['id'], isset($tower) && $tower == $tower['id']) . '>' . $tower['tower_name']  . '</option>';
+										}
+									}
+									?>
+
 
 								</select>
 								<?php echo form_error('type', '<span class="error">', '</span>'); ?><span class="error-message"></span>

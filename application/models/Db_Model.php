@@ -4,9 +4,9 @@
 class Db_Model extends CI_Model
 {
 
-	public function get_data($table, $where = array(), $order_by = null, $limit = null, $type = 0)
+	public function get_data($table, $where = array(), $order_by = null, $limit = null, $type = 0, $select = '*')
 	{
-		$this->db->select('*');
+		$this->db->select($select);
 		$this->db->from($table);
 
 		if (!empty($where)) {

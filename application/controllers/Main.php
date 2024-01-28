@@ -39,8 +39,31 @@ class Main extends MY_Controller
 		// print_r($_SESSION);
 		// exit;
 		// if ($this->session->has_userdata('user_id')) {
+		// $rent_data = array(
+		// 	'flat_id' => $_POST['flatId'],
+		// 	'tenant_id' => $_POST['userId'],
+		// 	'amount' => $flatData[0]['rent'],
+		// );
+		// $users = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
+		if ($_SESSION != '4' || $_SESSION != '5') {
+			// Get the current date
+			$currentDate = date('Y-m-d');
 
-		$this->load->view('welcome_message');
+			// Calculate the date one month ago
+			$oneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($currentDate)));
+			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 MONTH)"`;
+			$data['total'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
+			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 YEAR)"`;
+			$data['year'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
+
+			$data['booked'] = $this->Db_Model->get_data(TBL_RENT, $where = '', '', '', $type = 1, $select = 'DISTINCT(flat_id) as booked')[0]['booked'];
+			$data['total_flats'] = $this->Db_Model->get_data(TBL_FLAT, $where = '', '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0]['total_flats'];
+
+			$data['ratio'] = ($data['booked'] / $data['total_flats']) * 100;
+
+
+			$this->load->view('welcome_message', $data);
+		}
 		// } else {
 
 		// 	$this->load->view('login');
@@ -101,8 +124,8 @@ class Main extends MY_Controller
 		} else {
 
 			$users = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
-
-			$this->load->view('flat/book_flat', ['users' => $users]);
+			$tower = $this->Db_Model->get_data(TBL_TOWER, $where = '', '', '', $type = 1);
+			$this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
 		}
 	}
 	public function book_tower()
@@ -153,6 +176,7 @@ class Main extends MY_Controller
 			// Save to database using the model
 			$rent_data = array(
 				'flat_id' => $_POST['flatId'],
+				'tenant_id' => $_POST['userId'],
 				'amount' => $flatData[0]['rent'],
 			);
 			$user_id = $this->Db_Model->save_data(TBL_RENT, $rent_data);
