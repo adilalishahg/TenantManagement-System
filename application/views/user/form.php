@@ -9,71 +9,68 @@
 						<div class="form-row">
 
 							<div class="form-group col-md-6">
-								<label for="flatNameInput">Flat Name</label>
-								<input type="text" name="flat_name" class="form-control form-control-user" id="flatNameInput" aria-describedby="flatNameHelp" placeholder="Enter Flat Name...">
+								<label for="flatNameInput">First Name</label>
+								<input type="text" name="first_name" class="form-control form-control-user" id="first_name" aria-describedby="firstNameHelp" placeholder="Enter First Name...">
 								<span class="error-message"></span>
-								<?php echo form_error('flat_name', '<span class="error">', '</span>'); ?><span class="error-message"></span>
+								<?php echo form_error('first_name', '<span class="error">', '</span>'); ?><span class="error-message"></span>
+
+							</div>
+							<div class="form-group col-md-6">
+								<label for="flatNameInput">Last Name</label>
+								<input type="text" name="last_name" class="form-control form-control-user" id="last_name" aria-describedby="lastNameHelp" placeholder="Enter Last Name...">
+								<span class="error-message"></span>
+								<?php echo form_error('last_name', '<span class="error">', '</span>'); ?><span class="error-message"></span>
+
+							</div>
+							<div class="form-group col-md-6">
+								<label for="flatNameInput">Email</label>
+								<input type="text" name="email" class="form-control form-control-user" id="email" aria-describedby="emailHelp" placeholder="Enter Email ...">
+								<span class="error-message"></span>
+								<?php echo form_error('email', '<span class="error">', '</span>'); ?><span class="error-message"></span>
+
+							</div>
+							<div class="form-group col-md-6">
+								<label for="flatNameInput">Contact No:</label>
+								<input type="text" name="contact_no" class="form-control form-control-user" id="contact_no" aria-describedby="contact_noHelp" placeholder="Enter Contact Number...">
+								<span class="error-message"></span>
+								<?php echo form_error('contact_no', '<span class="error">', '</span>'); ?><span class="error-message"></span>
 
 							</div>
 
 							<div class="form-group col-md-6">
-								<label for="benefitsCheckbox">Flat Type</label>
-								<select class="form-select <?php echo form_error('flat_type') ? 'is-invalid' : ''; ?>" id="flat_type" name="flat_type">
+								<label for="benefitsCheckbox">Role</label>
+								<select class="form-select <?php echo form_error('role') ? 'is-invalid' : ''; ?>" id="role" name="role">
 									<option value="">Select Type</option>
-									<option value="1" <?php echo set_select('flat_type', '1', isset($flat_type) && $flat_type == '1'); ?>>
-										Luxury
+									<option value="1" <?php echo set_select('role', '1', isset($role) && $role == '1'); ?>>
+										Admin
 									</option>
-									<option value="2" <?php echo set_select('flat_type', '2', isset($flat_type) && $flat_type == '2'); ?>>
-										Simple
+									<option value="2" <?php echo set_select('role', '2', isset($role) && $role == '2'); ?>>
+										Manager
 									</option>
-								</select>
-								<?php echo form_error('flat_type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
+									<option value="3" <?php echo set_select('role', '3', isset($role) && $role == '3'); ?>>
+										Customer
+									</option>
+									<option value="5" <?php echo set_select('role', '5', isset($role) && $role == '5'); ?>>
+										Employee
+									</option>
+								</select><span class="error-message"></span>
+								<?php echo form_error('flat_type', '<span class="error">', '</span>'); ?>
 							</div>
 							<div class="form-group col-md-6">
-								<label for="Tower">Tower</label>
-
-								<select class="form-select" id="tower" name="tower">
-									<option value="">Select Tower</option>
-									<option value="1" <?php echo set_select('tower', '1', isset($tower) && $tower == '1'); ?>>
-										Luxury</option>
-									<option value="2" <?php echo set_select('tower', '2', isset($tower) && $tower == '2'); ?>>
-										Simple</option>
-
-								</select>
-								<?php echo form_error('type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
-							</div>
-							<div class="form-group col-md-6">
-								<label for="Status">Status</label>
-
-								<select class="form-select" id="status" name="status">
-									<option value="">Select Status</option>
-									<option value="1" <?php echo set_select('status', '1', isset($status) && $status == '1'); ?>>
-										Vacant</option>
-									<option value="2" <?php echo set_select('status', '2', isset($status) && $status == '2'); ?>>
-										Hired</option>
-
-								</select>
-								<?php echo form_error('type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
-							</div>
-							<div class="form-group col-md-6">
-								<label for="Owner">Owner</label>
-
-								<select class="form-select" id="owner" name="owner">
-									<option value="">Select Owner</option>
-									<option value="1" <?php echo set_select('owner', '1', isset($owner) && $owner == '1'); ?>>
-										User1</option>
-									<option value="2" <?php echo set_select('owner', '2', isset($owner) && $owner == '2'); ?>>
-										User2</option>
-
-								</select>
-								<?php echo form_error('type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
-							</div>
-							<div class="form-group col-md-6">
-								<label for="exampleInputRent">Rent</label>
-								<input type="text" name="rent" class="form-control form-control-user" id="rent" placeholder="Rent">
-								<?php echo form_error('rent', '<span class="error">', '</span>'); ?>
+								<label for="flatNameInput">Password:</label>
+								<input type="text" name="password" class="form-control form-control-user" id="password" aria-describedby="passwordHelp" placeholder="Enter Password ...">
 								<span class="error-message"></span>
+								<?php echo form_error('password', '<span class="error">', '</span>'); ?><span class="error-message"></span>
+
 							</div>
+							<div class="form-group col-md-6">
+								<label for="flatNameInput">Confirm Password:</label>
+								<input type="text" name="confirm_password" class="form-control form-control-user" id="confirm_password" aria-describedby="confirm_passwordHelp" placeholder="Enter Confirm Password...">
+								<span class="error-message"></span>
+								<?php echo form_error('confirm_password', '<span class="error">', '</span>'); ?><span class="error-message"></span>
+
+							</div>
+
 							<!-- </div> -->
 							<!-- <div class="form-row"> -->
 
@@ -126,59 +123,45 @@
 			var isValid = true;
 
 			// Validate Flat Name
-			var flatName = $('#flatNameInput').val();
+			var first_name = $('#first_name').val();
 
-			if (flatName.trim() === '') {
-				$('#flatNameInput').next('.error-message').html(
-					'<span class="text-danger">Flat Name is required</span>');
-
-				isValid = false;
-			}
-			// Validate Flat Name
-			var flat_type = $('#flat_type').val();
-
-			if (flat_type.trim() === '') {
-				$('#flat_type').next('.error-message').html(
-					'<span class="text-danger">Flat Type is required</span>');
+			if (first_name.trim() === '') {
+				$('#first_name').next('.error-message').html(
+					'<span class="text-danger">First Name is required</span>');
 
 				isValid = false;
 			}
 			// Validate Flat Name
-			var towerName = $('#tower').val();
+			var last_name = $('#last_name').val();
 
-			if (towerName.trim() === '') {
-				$('#tower').next('.error-message').html(
-					'<span class="text-danger">Tower Name is required</span>');
+			if (last_name.trim() === '') {
+				$('#last_name').next('.error-message').html(
+					'<span class="text-danger">Last Name is required</span>');
+
+				isValid = false;
+			}
+			var username = first_name + ' ' + last_name
+			// Validate Flat Name
+			var email = $('#email').val();
+
+			if (email.trim() === '') {
+				$('#email').next('.error-message').html(
+					'<span class="text-danger">Email is required</span>');
 
 				isValid = false;
 			}
 			// Validate Flat Name
-			var statusName = $('#status').val();
 
-			if (statusName.trim() === '') {
-				$('#status').next('.error-message').html(
-					'<span class="text-danger">Flat Status is required</span>');
-
-				isValid = false;
-			}
 			// Validate Flat Name
-			var ownerName = $('#owner').val();
+			var role = $('#role').val();
 
-			if (ownerName.trim() === '') {
-				$('#owner').next('.error-message').html(
-					'<span class="text-danger">Flat Owner is required</span>');
-
-				isValid = false;
-			}
-			// Validate Flat Name
-			var rent = $('#rent').val();
-
-			if (rent.trim() === '') {
-				$('#rent').next('.error-message').html(
-					'<span class="text-danger">Rent amount is required</span>');
+			if (role.trim() === '') {
+				$('#role').next('.error-message').html(
+					'<span class="text-danger">Role is required</span>');
 
 				isValid = false;
 			}
+
 
 			// Add more validation checks for other fields if needed
 
@@ -193,15 +176,26 @@
 
 			$.ajax({
 				type: 'POST',
-				url: '<?php echo base_url(); ?>book_flat',
+				url: '<?php echo base_url(); ?>user',
 				data: formData,
 				success: function(response) {
 					// Handle successful submission (you can redirect or show a success message)
-					swal("Flat Registered!", "Flat Registered Successfully!", "success");
+					swal("User Registered!", username + " registered Successfully!", "success");
 
 
 				},
 				error: function(xhr, status, error) {
+
+
+
+
+
+
+
+
+
+
+
 
 
 					swal("Oops!", "Something went wrong", "error");

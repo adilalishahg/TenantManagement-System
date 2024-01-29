@@ -4,6 +4,18 @@
 class Db_Model extends CI_Model
 {
 
+	public function booking_detail($user, $select = '*')
+	{
+
+		$this->db->select(TBL_RENT . '.*');
+		// $this->db->select(TBL_USER . '.*');
+		$this->db->select(TBL_FLAT . '.*');
+		// $this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id =' . TBL_RENT . ' .flat_id', 'left');
+		$this->db->join(TBL_USER, TBL_RENT . '.tenant_id =' . TBL_USER . ' .user_id', 'left');
+		$this->db->join(TBL_FLAT, TBL_RENT . '.flat_id =' . TBL_FLAT . ' .flat_id', 'left');
+		$get = $this->db->get(TBL_RENT);
+		return ($get->result_array());
+	}
 	public function get_data($table, $where = array(), $order_by = null, $limit = null, $type = 0, $select = '*')
 	{
 		$this->db->select($select);

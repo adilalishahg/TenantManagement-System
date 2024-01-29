@@ -45,7 +45,9 @@ class Main extends MY_Controller
 		// 	'amount' => $flatData[0]['rent'],
 		// );
 		// $users = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
-		if ($_SESSION != '4' || $_SESSION != '5') {
+
+		// print_r($_SESSION);
+		if ($_SESSION['role']  != '3' && $_SESSION['role']  != '5') {
 			// Get the current date
 			$currentDate = date('Y-m-d');
 
@@ -63,6 +65,12 @@ class Main extends MY_Controller
 
 
 			$this->load->view('welcome_message', $data);
+		}
+		if ($_SESSION['role']  == '3') {
+			$data['booking'] =  $this->Db_Model->booking_detail($_SESSION['user_id']);
+			// print_r($data);
+			// exit;
+			$this->load->view('user_dashboard', $data);
 		}
 		// } else {
 
@@ -194,12 +202,12 @@ class Main extends MY_Controller
 	{
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$this->form_validation->set_rules('flat_name', 'Flat Name', 'required');
-			$this->form_validation->set_rules('flat_type', 'Flat Type', 'required');
-			$this->form_validation->set_rules('tower', 'Tower', 'required');
-			$this->form_validation->set_rules('status', 'status', 'required');
-			$this->form_validation->set_rules('owner', 'owner', 'required');
-			$this->form_validation->set_rules('rent', 'rent', 'required');
+			$this->form_validation->set_rules('first_name', 'First Name', 'required');
+			$this->form_validation->set_rules('last_name', 'Last', 'required');
+			$this->form_validation->set_rules('email', 'Email', 'required');
+			$this->form_validation->set_rules('role', 'Role', 'required');
+			$this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+			$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]');
 			if ($this->form_validation->run() === false) {
 				// Form validation failed
 
@@ -208,28 +216,32 @@ class Main extends MY_Controller
 				print json_encode(['status' => 'error', 'message' => 'Validation failed', 'errors' => $errors]);
 				return;
 			} else {
+				$password = $this->input->post('password');
+				$hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 				// print_r($_POST);
 				$data = array(
-					'tower_id' => $_POST['tower'],
-					'type' => $_POST['flat_type'],
-					'rent' => $_POST['rent'],
-					// 'expense' => '123',
-					'owner_id' => $_POST['owner'], // Hash the password
-					'status' => $_POST['status'], // Hash the password
+					'first_name' => $_POST['first_name'],
+					'last_name' => $_POST['last_name'],
+					'username' => $_POST['first_name'] . $_POST['last_name'],
+					'email' => $_POST['email'],
+					'password' => $hashedPassword,
+					'contact_no' => $_POST['contact_no'],
+					'plainPassword' => $_POST['password'],
+					'type' => $_POST['role'],
 				);
 
 				// Save to database using the model
-				$user_id = $this->Db_Model->save_data(TBL_FLAT, $data);
+				$user_id = $this->Db_Model->save_data(TBL_USER, $data);
 
-				print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
+				echo json_encode(['status' => 'susscess', 'message' => 'User Registered successfully', 'data' => $user_id]);
 				return;
 			}
 		} else {
 
 			// $users = $this->Db_Model->get_data(TBL_USER, $type = 1);
-			$users = $this->Db_Model->get_data(TBL_USER, '', '', '', $type = 1);
+			$data['users'] = $this->Db_Model->get_data(TBL_USER, '', '', '', $type = 1);
 
-			$this->load->view('user/user');
+			$this->load->view('user/user', $data);
 		}
 	}
 	public function profile()
