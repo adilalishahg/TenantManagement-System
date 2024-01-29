@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 28, 2024 at 09:04 PM
+-- Generation Time: Jan 29, 2024 at 02:39 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 5.6.40
 
@@ -47,16 +47,17 @@ CREATE TABLE `monthly_rent` (
   `tenant_id` int(11) NOT NULL,
   `flat_id` int(11) NOT NULL,
   `amount` int(11) NOT NULL,
-  `expense` int(11) NOT NULL
+  `expense` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `monthly_rent`
 --
 
-INSERT INTO `monthly_rent` (`id`, `tenant_id`, `flat_id`, `amount`, `expense`) VALUES
-(1, 0, 1, 123, 0),
-(2, 0, 1, 123, 0);
+INSERT INTO `monthly_rent` (`id`, `tenant_id`, `flat_id`, `amount`, `expense`, `created_at`, `updated_at`) VALUES
+(5, 15, 1, 123, 0, '2024-01-28 21:04:47', '2024-01-28 21:04:47');
 
 -- --------------------------------------------------------
 
@@ -133,15 +134,8 @@ CREATE TABLE `tbl_users` (
 
 INSERT INTO `tbl_users` (`user_id`, `first_name`, `last_name`, `username`, `email`, `password`, `contact_no`, `type`, `created_at`, `plainPassword`, `profile_img`) VALUES
 (13, 'adil', 'ali', '', 'adilali@gmail.com', '$2y$10$id820P60qkm.EXE/VSXT9OX2pDLIz0NOLVVcBy.afc1Cb9AUFJtSK', '', '1', '2023-12-05 21:22:58', '', ''),
-(14, 'test', 'user', '', 'adilali1@gmail.com', '$2y$10$0f8CRtKqslpV8TDWUtPlEeRf5kA7BX/fk4a1eie5Foc3SdWiCUf1y', '', '1', '2023-12-05 21:25:13', 'adil1234', ''),
 (15, 'test', 'test', '', '1adilali1@gmail.com', '$2y$10$SAelUeQZD9yAmzZTQY7Fg.KTnO7JZc.7Fmon4kfb5kFo/m85byf5y', '11111111111', '3', '2023-12-05 21:48:36', 'adil1234', ''),
-(16, 'adil', 'ali', '', '2adilali1@gmail.com', '$2y$10$dlLQnS3/M9Id5IhLIiD6cel1Kp/hPYRPgygrQf4hYGkEnJEWpm7ru', '', '2', '2023-12-05 21:50:04', '123456789', ''),
-(17, 'test', 'user', '', '5adilali1@gmail.com', '$2y$10$508FNT9EdJLJVIssc5p5decKwnnqB7efDlFDLHFIrLVtikXBddDQS', '', '2', '2023-12-05 21:51:31', '123456789', ''),
-(18, 'adil', 'ail', '', 'ds5adilali1@gmail.com', '$2y$10$ojrPnFso89QfXiIhdhny7.V.bAglGA87gkLDoZsSq6qoU42Da79M6', '', '1', '2023-12-05 21:52:51', '123456789', ''),
-(19, 'adil', 'Ali', '', 'a5adilali1@gmail.com', '$2y$10$EFW/zND42lglFmaL73GEgep/A6FDduhy8o5L16HM8XdJ7IF6WTPpW', '', '2', '2023-12-05 21:54:13', 'Al123456', 'assets/uploads/WhatsApp_Image_2023-10-08_at_08_11_428.jpeg'),
-(20, 'test', 'test', '', 'a5adilali1z@gmail.com', '$2y$10$qQU6rGLyQUlKXC5m9YyCeu2VRTpJexnvW96Ap9aWC0joL6oWkQd36', '', '2', '2023-12-07 03:30:38', 'Al123456', 'assets/uploads/WhatsApp_Image_2023-10-08_at_08_11_423.jpeg'),
-(21, 'Mr', 'User', '', 'adil@gmail.com', '$2y$10$1SqC35hKkCVuJ18cM99qY.HrPFlzwHO38D6a8jJ0d3nQQzn8sGO1K', '0321882774', '1', '2023-12-31 01:59:46', '16Arid1314', 'assets/uploads/'),
-(22, 'adil', 'ali', '', 'adilal1ai1@gmail.com', '$2y$10$XOu8QW8wdbyQQnJhalzGperMqOU/zZrxnitZsXRLIy0iJ6HN9yXSi', '0321882774', '2', '2024-01-11 02:10:47', '16Arid1314', '');
+(16, 'adil', 'ali', '', '2adilali1@gmail.com', '$2y$10$dlLQnS3/M9Id5IhLIiD6cel1Kp/hPYRPgygrQf4hYGkEnJEWpm7ru', '', '2', '2023-12-05 21:50:04', '123456789', '');
 
 -- --------------------------------------------------------
 
@@ -212,7 +206,7 @@ ALTER TABLE `employee`
 -- AUTO_INCREMENT for table `monthly_rent`
 --
 ALTER TABLE `monthly_rent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tbl_flats`
@@ -230,7 +224,7 @@ ALTER TABLE `tbl_tower`
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `tenant`
