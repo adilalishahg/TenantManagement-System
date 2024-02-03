@@ -31,22 +31,34 @@ class Main extends MY_Controller
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/userguide3/general/urls.html
 	 */
+	function calculateDays($givenDateTime)
+	{
+		$today = new DateTime();
+		$lastDayOfMonth = new DateTime(date('Y-m-t')); // last day of the current month
+		$givenDate = new DateTime($givenDateTime);
+
+		// Calculate the number of pending days
+		$pendingDays = $lastDayOfMonth->format('j') - $today->format('j');
+
+		// Calculate the number of passed days
+		$passedDays = $today->format('j') - 1;
+
+		// Calculate the difference in seconds
+		$timeDifference = $today->getTimestamp() - $givenDate->getTimestamp();
+
+		// Calculate the number of spent days
+		$spentDays = floor($timeDifference / (60 * 60 * 24));
+
+		return [
+			'pendingDays' => $pendingDays,
+			'passedDays' => $passedDays,
+			'spentDays' => $spentDays
+		];
+	}
+
 	public function index()
 	{
-		// $this->load->view('includes/header');
-		// $this->load->view('includes/navbar');
-		// $this->load->view('includes/sidebar');
-		// print_r($_SESSION);
-		// exit;
-		// if ($this->session->has_userdata('user_id')) {
-		// $rent_data = array(
-		// 	'flat_id' => $_POST['flatId'],
-		// 	'tenant_id' => $_POST['userId'],
-		// 	'amount' => $flatData[0]['rent'],
-		// );
-		// $users = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
 
-		// print_r($_SESSION);
 		if ($_SESSION['role']  != '3' && $_SESSION['role']  != '5') {
 			// Get the current date
 			$currentDate = date('Y-m-d');
@@ -68,8 +80,16 @@ class Main extends MY_Controller
 		}
 		if ($_SESSION['role']  == '3') {
 			$data['booking'] =  $this->Db_Model->booking_detail($_SESSION['user_id']);
-			// print_r($data);
-			// exit;
+
+			foreach ($data['booking'] as $key => &$value) {
+				// print_r($value);
+				$return = ($this->calculateDays($value['created_at']));;
+				$value['spentDays'] = $return['spentDays'];
+				$value['passedDays'] = $return['passedDays'];
+				$value['pendingDays'] = $return['pendingDays'];
+				// echo "Pending Days: $pendingDays, Passed Days: $passedDays, Spent Days: $spentDays";
+			}
+
 			$this->load->view('user_dashboard', $data);
 		}
 		// } else {

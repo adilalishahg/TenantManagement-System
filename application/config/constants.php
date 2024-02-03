@@ -90,6 +90,7 @@ defined('EXIT__AUTO_MAX')      or define('EXIT__AUTO_MAX', 125); // highest auto
 // define('SITE_NAME', 'Your Site Name');
 define('AURL', 'http://localhost/rms/');
 // define('UPLOAD_PATH', FCPATH . 'uploads/');
+define('TITLE', 'Tenant Management');
 define('TBL_USER', 'tbl_users');
 define('TBL_FLAT', 'tbl_flats');
 define('TBL_RENT', 'monthly_rent');

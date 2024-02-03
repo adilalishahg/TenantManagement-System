@@ -17,7 +17,7 @@
 							<div class="col-lg-6">
 								<div class="p-5">
 									<div class="text-center">
-										<h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+										<h1 class="h4 text-gray-900 mb-4"><?php echo TITLE;?></h1>
 									</div>
 									<form class="user" method="post" action="<?php echo base_url(); ?>login">
 										<div class="form-group">
