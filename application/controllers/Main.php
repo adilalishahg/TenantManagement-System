@@ -153,7 +153,52 @@ class Main extends MY_Controller
 
 			$users = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
 			$tower = $this->Db_Model->get_data(TBL_TOWER, $where = '', '', '', $type = 1);
+			// return json_encode(['users' => $users, 'towers' => $tower]);
 			$this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
+		}
+	}
+	public function book_flat_ajax()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->form_validation->set_rules('flat_name', 'Flat Name', 'required');
+			$this->form_validation->set_rules('flat_type', 'Flat Type', 'required');
+			$this->form_validation->set_rules('tower', 'Tower', 'required');
+			$this->form_validation->set_rules('status', 'status', 'required');
+			$this->form_validation->set_rules('owner', 'owner', 'required');
+			$this->form_validation->set_rules('rent', 'rent', 'required');
+			if ($this->form_validation->run() === false) {
+				// Form validation failed
+
+				$errors = $this->form_validation->error_array();
+				// print_r($errors);
+				print json_encode(['status' => 'error', 'message' => 'Validation failed', 'errors' => $errors]);
+				return;
+			} else {
+				// print_r($_POST);
+				$data = array(
+					'tower_id' => $_POST['tower'],
+					'type' => $_POST['flat_type'],
+					'rent' => $_POST['rent'],
+					// 'expense' => '123',
+					'owner_id' => $_POST['owner'], // Hash the password
+					'status' => $_POST['status'], // Hash the password
+				);
+
+				// Save to database using the model
+				$user_id = $this->Db_Model->save_data(TBL_FLAT, $data);
+
+				print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
+				return;
+			}
+		} else {
+			// print_r('asd');
+
+			$users = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
+			$tower = $this->Db_Model->get_data(TBL_TOWER, $where = '', '', '', $type = 1);
+			echo json_encode(['users' => $users, 'towers' => $tower]);
+			exit;
+			// $this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
 		}
 	}
 	public function book_tower()
