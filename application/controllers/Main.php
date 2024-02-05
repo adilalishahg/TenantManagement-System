@@ -157,6 +157,11 @@ class Main extends MY_Controller
 			$this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
 		}
 	}
+	public function book_flat_ajax_submmit()
+	{
+		echo 'asd';
+		exit;
+	}
 	public function book_flat_ajax()
 	{
 
@@ -188,7 +193,7 @@ class Main extends MY_Controller
 				// Save to database using the model
 				$user_id = $this->Db_Model->save_data(TBL_FLAT, $data);
 
-				print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
+				print json_encode(['status' => 'success', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
 				return;
 			}
 		} else {

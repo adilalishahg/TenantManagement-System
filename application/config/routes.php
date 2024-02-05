@@ -58,6 +58,7 @@ $route['book_flat'] = 'main/book_flat';
 $route['book_tower'] = 'main/book_tower';
 $route['register_flat'] = 'main/register_flat';
 $route['book_flat_ajax'] = 'main/book_flat_ajax';
+$route['book_flat_ajax_submmit'] = 'main/book_flat_ajax_submmit';
 $route['book_tower_ajax'] = 'main/book_tower_ajax';
 $route['register_flat_ajax'] = 'main/register_flat_ajax';
 $route['user'] = 'main/user';
