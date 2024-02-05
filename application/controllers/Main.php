@@ -276,6 +276,43 @@ class Main extends MY_Controller
 			$this->load->view('tower/book_tower', ['users' => $users]);
 		}
 	}
+	public function book_tower_ajax()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->form_validation->set_rules('tower', 'Tower Name', 'required');
+
+			if ($this->form_validation->run() === false) {
+				// Form validation failed
+
+				$errors = $this->form_validation->error_array();
+				// print_r($errors);
+				print json_encode(['status' => 'error', 'message' => 'Validation failed', 'errors' => $errors]);
+				return;
+				exit;
+			} else {
+				// print_r($_POST);
+				$data = array(
+					'tower_name' => $_POST['tower'],
+					'owner_id' => $_POST['owner'] ? $_POST['owner'] : $_SESSION['user_id'],
+
+				);
+
+				// Save to database using the model
+				$user_id = $this->Db_Model->save_data(TBL_TOWER, $data);
+
+				print json_encode(['status' => 'success', 'message' => 'Tower Registered successfully', 'data' => $user_id]);
+				return;
+				exit;
+			}
+		} else {
+
+			$users = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
+			echo json_encode($users);
+			exit;
+			$this->load->view('tower/book_tower', ['users' => $users]);
+		}
+	}
 	public function register_flat()
 	{
 		// $where = array(
