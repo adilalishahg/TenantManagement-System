@@ -30,8 +30,7 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
-            aria-controls="collapseTwo">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
             <span>Components</span>
         </a>
@@ -46,8 +45,7 @@
 
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-            aria-expanded="true" aria-controls="collapseUtilities">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fas fa-fw fa-wrench"></i>
             <span>Utilities</span>
         </a>
@@ -71,8 +69,7 @@
     </div>
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
-            aria-controls="collapsePages">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
             <i class="fas fa-fw fa-folder"></i>
             <span>Pages</span>
         </a>
@@ -80,19 +77,19 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Modules:</h6>
                 <?php if ($_SESSION['role'] !=  '3' && $_SESSION['role'] != '5') {
-				?>
+                ?>
 
-                <!-- <a class="collapse-item" href="user">User Register</a> -->
-                <a class="collapse-item" onclick="loadModule('register_flat_ajax')">User Register</a>
-                <a class="collapse-item" onclick="loadModule('book_flat_ajax')"> Flat Register</a>
-                <a class="collapse-item" onclick="loadModule('book_tower_ajax')"> Tower Register</a>
+                    <!-- <a class="collapse-item" href="user">User Register</a> -->
+                    <a class="collapse-item" onclick="loadModule('register_flat_ajax')">User Register</a>
+                    <a class="collapse-item" onclick="loadModule('book_flat_ajax')"> Flat Register</a>
+                    <a class="collapse-item" onclick="loadModule('book_tower_ajax')"> Tower Register</a>
 
 
                 <?php } else { ?>
 
-                <a class="collapse-item" href="register_flat">Register Flat</a>
+                    <a class="collapse-item" href="register_flat">Register Flat</a>
                 <?php }
-				?>
+                ?>
                 <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                 <div class="collapse-divider"></div>
                 <h6 class="collapse-header">Other Pages:</h6>
@@ -126,8 +123,7 @@
 
     <!-- Sidebar Message -->
     <div class="sidebar-card d-none d-lg-flex">
-        <img class="sidebar-card-illustration mb-2" src=<?php echo base_url("assets/img/undraw_rocket.svg") ?>
-            alt="...">
+        <img class="sidebar-card-illustration mb-2" src=<?php echo base_url("assets/img/undraw_rocket.svg") ?> alt="...">
         <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features,
             components, and more!</p>
         <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to
@@ -135,126 +131,157 @@
     </div>
 </ul>
 <script>
-// Use jQuery to attach an event listener to the form
+    // Use jQuery to attach an event listener to the form
 
-function preventFormSubmission(e) {
-    // Your validation or processing logic goes here
-    // Gather form data
-    var formData = $('#book_flat_form').serialize();
+    function preventFormSubmission(e) {
+        // Your validation or processing logic goes here
+        // Gather form data
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            // Your custom logic to prevent form submission
+            console.log(event)
+            event.preventDefault(); // This line prevents the default form submission behavior
+        });
+        // alert('asd')
+        var formData = $('#book_flat_form').serialize();
+        var ret = true;
+        if ($("#flatNameInput").val().trim() === "") {
+            $("#flatNameError").text("Flat Name cannot be empty");
+            ret = false;
 
-    if ($("#flatNameInput").val().trim() === "") {
-        $("#flatNameError").text("Flat Name cannot be empty");
+        } else {
+            $("#flatNameError").text("");
 
-    }
-    if ($("#flat_type").val().trim() === "") {
-        $("#flat_typeError").text("Please Select Flat Type");
-
-    }
-    if ($("#status").val().trim() === "") {
-        $("#statusError").text("Please Select status");
-
-    }
-    if ($("#tower").val().trim() === "") {
-        $("#towerError").text("Please Select Tower");
-
-    }
-    if ($("#owner").val().trim() === "") {
-        $("#ownerError").text("Please Select Owner");
-
-    }
-    if ($("#rent").val().trim() === "") {
-        $("#rentError").text("Please Enter Rent ");
-
-    }
-    return false;
-
-    // if (flat_type.trim() === "") {
-    // 	$("#flat_typeError").text("Flat Type cannot be empty");
-    // 	return false; // Prevent form submission
-    // }
-    console.log(flatName)
-    // Ajax POST request
-    $.ajax({
-        type: "POST",
-        url: "your_server_endpoint.php", // Replace with your server endpoint
-        data: formData,
-        success: function(response) {
-            // Handle the success response
-            console.log("Ajax request successful");
-            console.log(response);
-        },
-        error: function(error) {
-            // Handle the error
-            console.log("Ajax request failed");
-            console.log(error);
         }
-    });
+        if ($("#flat_type").val().trim() === "") {
+            $("#flat_typeError").text("Please Select Flat Type");
+            ret = false;
 
-    // Returning false prevents the form from submitting
-    return false;
-}
+        } else {
+            $("#flat_typeError").text("");
+
+        }
+        if ($("#status").val().trim() === "") {
+            $("#statusError").text("Please Select status");
+            ret = false;
+
+        } else {
+            $("#statusError").text("");
+
+        }
+        if ($("#tower").val().trim() === "") {
+            ret = false;
+            $("#towerError").text("Please Select Tower");
+
+        } else {
+            $("#towerError").text("");
+
+        }
+        if ($("#owner").val().trim() === "") {
+            ret = false;
+            $("#ownerError").text("Please Select Owner");
+
+        } else {
+            $("#ownerError").text("");
+
+        }
+        if ($("#rent").val().trim() === "") {
+            ret = false;
+            $("#rentError").text("Please Enter Rent ");
+
+        } else {
+            $("#rentError").text("");
+
+        }
 
 
-function button(value, btn, name) {
-    return `<div class="form-group col-md-6">
+        // if (flat_type.trim() === "") {
+        // 	$("#flat_typeError").text("Flat Type cannot be empty");
+        // 	return false; // Prevent form submission
+        // }
+        console.log(flatName)
+        // Ajax POST request
+        $.ajax({
+            type: "POST",
+            url: "your_server_endpoint.php", // Replace with your server endpoint
+            data: formData,
+            success: function(response) {
+                // Handle the success response
+                console.log("Ajax request successful");
+                console.log(response);
+            },
+            error: function(error) {
+                // Handle the error
+                console.log("Ajax request failed");
+                console.log(error);
+            }
+        });
+
+        // Returning false prevents the form from submitting
+        return false;
+    }
+
+
+    function button(value, btn, name) {
+        return `<div class="form-group col-md-6">
 								<button name="submit"   id="` + value + `" value="` + value + `" class="btn btn-` + btn + ` btn-user btn-block ">
 									` + name + `
 								</button>
 							</div>
 								 `;
-}
+    }
 
-function capitalizeFirstLetter(str) {
-    return str.replace(/\b\w/g, function(match) {
-        return match.toUpperCase();
-    });
-}
-const select = (val = '', data = '') => {
+    function capitalizeFirstLetter(str) {
+        return str.replace(/\b\w/g, function(match) {
+            return match.toUpperCase();
+        });
+    }
+    const select = (val = '', data = '') => {
 
-    return `<label for="` + (val) + `">` + capitalizeFirstLetter(val) + `</label>
+        return `<label for="` + (val) + `">` + capitalizeFirstLetter(val) + `</label>
 		<select class="form-select" id="` + val + `" name="` + val + `">
 					<option value="">Select ` + capitalizeFirstLetter(val) + `</option>
 					` + data + ` 
 				</select>
 				<span class="error-message" id = "` + val + `Error"></span>`
-}
-const loadModule = (val) => {
-    $.get(val, function(data, status) {
+    }
+    const loadModule = (val) => {
+        $.get(val, function(data, status) {
 
-        var data = JSON.parse(data);
-        if (val == 'book_flat_ajax') {
-            load_tower()
-            const {
-                users,
-                towers
-            } = data
+            var data = JSON.parse(data);
+            if (val == 'book_flat_ajax') {
+                load_tower()
+                const {
+                    users,
+                    towers
+                } = data
 
-            let owner_options = tower_options = '';
-            users.forEach((user) => {
-                owner_options +=
-                    `<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
-            })
-            towers.forEach((tower) => {
-                tower_options +=
-                    `<option value="${tower.id}">${tower.tower_name} </option>`
-            })
-            const select_owner = (select('owner', owner_options))
-            const select_tower = (select('tower', tower_options))
+                let owner_options = tower_options = '';
+                users.forEach((user) => {
+                    owner_options +=
+                        `<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
+                })
+                towers.forEach((tower) => {
+                    tower_options +=
+                        `<option value="${tower.id}">${tower.tower_name} </option>`
+                })
+                const select_owner = (select('owner', owner_options))
+                const select_tower = (select('tower', tower_options))
 
-            $('#owner_div').html(select_owner)
-            $('#tower_div').html(select_tower)
-            // console.log(select_owner)
-        }
-    })
-}
-const load_tower = () => {
-    var response = `
+                $('#owner_div').html(select_owner)
+                $('#tower_div').html(select_tower)
+                // console.log(select_owner)
+            }
+        })
+    }
+    const load_tower = () => {
+        var response = `
 				<div class="container-fluid">
 					<div class="d-sm-flex align-items-center justify-content-between mb-2">
 						<h1 class="h3 mb-0 text-gray-800">Flat Registration</h1>
 						<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
 					</div>`
-    response += `<div class="card o-hidden border-0 shadow-lg my-5">
+        response += `<div class="card o-hidden border-0 shadow-lg my-5">
 		<div class="card-body p-0">
 		<!-- Nested Row within Card Body -->
 		<div class="row">
@@ -325,11 +352,11 @@ const load_tower = () => {
 		</div>
 		</div>
 		</div>`;
-    response += `</div> `;
+        response += `</div> `;
 
-    $('.container-fluid').html('');
-    $('.container-fluid').html(response);
+        $('.container-fluid').html('');
+        $('.container-fluid').html(response);
 
-}
+    }
 </script>
 <!-- End of Sidebar -->
