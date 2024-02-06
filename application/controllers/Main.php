@@ -143,9 +143,9 @@ class Main extends MY_Controller
 	public function logout()
 	{
 		// Destroy the user's session
-		$this->session->sess_destroy();
 
-		// Redirect to the login page
+		$this->session->sess_destroy();
+		// // Redirect to the login page
 		redirect('login'); // Change 'auth/login' to your actual login route
 
 	}
@@ -323,19 +323,26 @@ class Main extends MY_Controller
 				'flat_id' => $_POST['flatId'],
 			);
 			$flatData = $this->Db_Model->get_data(TBL_FLAT, $where = $data, $order_by = null, $limit = null, $type = 1);
-			print_r($flatData);
+			// print_r($flatData);
 			// Save to database using the model
 			$rent_data = array(
 				'flat_id' => $_POST['flatId'],
 				'tenant_id' => $_POST['userId'],
 				'amount' => $flatData[0]['rent'],
 			);
+			$where = array(
+				'flat_id' => $_POST['flatId']
+			);
+			$data = array(
+				'status' => '2'
+			);
+			$user_id = $this->Db_Model->update_data(TBL_FLAT, $data, $where);
 			$user_id = $this->Db_Model->save_data(TBL_RENT, $rent_data);
 
 			print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
 		} else {
 
-			$where = '';
+			$where = 'status = 1';
 			$data['flats'] = $this->Db_Model->get_data(TBL_FLAT, $where, '', '', $type = 1);
 
 			$this->load->view('flat/flats', $data);
@@ -386,6 +393,57 @@ class Main extends MY_Controller
 
 			$this->load->view('user/user', $data);
 		}
+	}
+	public function user_ajax()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->form_validation->set_rules('first_name', 'First Name', 'required');
+			$this->form_validation->set_rules('last_name', 'Last', 'required');
+			$this->form_validation->set_rules('email', 'Email', 'required');
+			$this->form_validation->set_rules('role', 'Role', 'required');
+			$this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+			$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]');
+			if ($this->form_validation->run() === false) {
+				// Form validation failed
+
+				$errors = $this->form_validation->error_array();
+				// print_r($errors);
+				print json_encode(['status' => 'error', 'message' => 'Validation failed', 'errors' => $errors]);
+				return;
+			} else {
+				$password = $this->input->post('password');
+				$hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+				// print_r($_POST);
+				$data = array(
+					'first_name' => $_POST['first_name'],
+					'last_name' => $_POST['last_name'],
+					'username' => $_POST['first_name'] . $_POST['last_name'],
+					'email' => $_POST['email'],
+					'password' => $hashedPassword,
+					'contact_no' => $_POST['contact_no'],
+					'plainPassword' => $_POST['password'],
+					'type' => $_POST['role'],
+				);
+
+				// Save to database using the model
+				$user_id = $this->Db_Model->save_data(TBL_USER, $data);
+
+				echo json_encode(['status' => 'success', 'message' => 'User Registered successfully', 'data' => $user_id]);
+				exit;
+			}
+		} else {
+
+			// $users = $this->Db_Model->get_data(TBL_USER, $type = 1);
+			$data['users'] = $this->Db_Model->get_data(TBL_USER, '', '', '', $type = 1);
+			echo json_encode($data);
+			exit;
+		}
+	}
+	public function user_ajax2()
+	{
+		echo json_encode($_REQUEST);
+		exit;
 	}
 	public function profile()
 	{

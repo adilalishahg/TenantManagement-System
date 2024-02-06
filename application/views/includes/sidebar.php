@@ -90,9 +90,10 @@
 				?>
 
 					<!-- <a class="collapse-item" href="user">User Register</a> -->
-					<a class="collapse-item" onclick="loadModule('register_flat_ajax')">User Register</a>
+					<a class="collapse-item" onclick="loadModule('user_ajax')">User Register</a>
 					<a class="collapse-item" onclick="loadModule('book_flat_ajax')"> Flat Register</a>
 					<a class="collapse-item" onclick="loadModule('book_tower_ajax')"> Tower Register</a>
+					<a class="collapse-item" onclick="loadModule('employees_ajax')"> Employees</a>
 
 
 				<?php } else { ?>
@@ -168,10 +169,47 @@
 
 	}
 
+	function preventFormUser(e) {
+
+		var form = document.querySelector('form');
+		$('#cancel').click(function() {
+			document.getElementById("book_user_form_new").reset();
+			$('.error-message').html('')
+			return false;
+		})
+		const url = ("<?php echo AURL; ?>user_ajax")
+		var formData = $('#book_user_form_new').serialize();
+		$.ajax({
+			type: "POST",
+			url: url, // Replace with your server endpoint
+			data: formData,
+			success: function(response) {
+				let res = JSON.parse(response);
+				// Handle the success response 
+				if (res.status == 'error') {
+					// console.log(res)
+					showError(res.errors)
+				}
+				if (res.status == 'success') {
+					swal(res.message + "!", res.message, "success");
+					document.getElementById("book_tower_form").reset();
+
+				}
+
+			},
+			error: function(error) {
+				// Handle the error
+				console.log("Ajax request failed");
+				console.log(error);
+			}
+		});
+		return false
+	}
+
 	function preventFormTower(e) {
 		var form = document.querySelector('form');
 		$('#cancel').click(function() {
-			document.getElementById("book_flat_form").reset();
+			document.getElementById("book_tower_form").reset();
 			$('.error-message').html('')
 			return false;
 		})
@@ -197,7 +235,7 @@
 				}
 				if (res.status == 'success') {
 					swal(res.message + "!", res.message, "success");
-					document.getElementById("book_flat_form").reset();
+					document.getElementById("book_tower_form").reset();
 
 				}
 
@@ -324,11 +362,11 @@
 
 	function button(value, btn, name) {
 		return `<div class="form-group col-md-6">
-								<button name="submit"   id="` + value + `" value="` + value + `" class="btn btn-` + btn + ` btn-user btn-block ">
-									` + name + `
-								</button>
-							</div>
-								 `;
+					<button name="submit"   id="` + value + `" value="` + value + `" class="btn btn-` + btn + ` btn-user btn-block ">
+						` + name + `
+					</button>
+				</div>
+						`;
 	}
 
 
@@ -349,16 +387,13 @@
 	}
 
 	function loadModule(val) {
-		console.log(val)
+
 		localStorage.setItem('route_selected', val)
 		$.get(val, function(data, status) {
-
 			const headingElement = document.querySelector('.h3.mb-0.text-gray-800.route_heading');
 			var data = JSON.parse(data);
 			if (val == 'main_ajax') {
-
 				headingElement.textContent = 'Dashboard';
-
 				var res_route_html = load_dashboard(data)
 				console.log(res_route_html)
 			} else if (val == 'book_flat_ajax') {
@@ -390,6 +425,38 @@
 
 				let owner_options = tower_options = '';
 				data.forEach((user) => {
+					owner_options +=
+						`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
+				})
+				var select_owner = (select('owner', owner_options))
+				// var select_tower = (select('tower', tower_options))
+
+				$('#owner_div').html(select_owner)
+				// $('#tower_div').html(select_tower)
+				// console.log(select_owner)
+			} else if (val == 'employees_ajax') {
+				headingElement.textContent = 'Employees List';
+				show_employees()
+
+				// let owner_options = tower_options = '';
+				// data.forEach((user) => {
+				// 	owner_options +=
+				// 		`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
+				// })
+
+				// var select_owner = (select('owner', owner_options))
+				// // var select_tower = (select('tower', tower_options))
+
+				// $('#owner_div').html(select_owner)
+				// $('#tower_div').html(select_tower)
+				// console.log(select_owner)
+			} else if (val == 'user_ajax') {
+				headingElement.textContent = 'User Registration';
+				user_ajax()
+
+				let owner_options = tower_options = '';
+				console.log(data)
+				data.users.forEach((user) => {
 
 					owner_options +=
 						`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
@@ -472,9 +539,7 @@
 								<label for="flatNameInput">Flat Name</label>
 								<input type="text" name="flat_name" class="form-control form-control-user" id="flatNameInput" aria-describedby="flatNameHelp" placeholder="Enter Flat Name...">
 								<span class="error-message" id ="flat_name_error"></span>
-								<?php echo form_error('flat_name', '<span class="error">', '</span>'); ?><span class="error-message"></span>
-
-							</div>
+	  						</div>
 
 							<div class="form-group col-md-6">
 								<label for="benefitsCheckbox">Flat Type</label>
@@ -487,11 +552,9 @@
 										Simple
 									</option>
 								</select><span class="error-message" id ="flat_type_error"></span>
-								<?php echo form_error('flat_type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
-							</div>
+     						 </div>
 							<div class="form-group col-md-6" id='tower_div'>
 								 
-								<?php echo form_error('type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
 							</div>
 							<div class="form-group col-md-6">
 								<label for="Status">Status</label>
@@ -504,17 +567,14 @@
 										Hired</option>
 
 								</select><span class="error-message" id ="status_error"></span>
-								<?php echo form_error('type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
-							</div>
+	  						</div>
 							<div class="form-group col-md-6" id='owner_div'>
-							
-								<?php echo form_error('type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
-							</div>
+
+	  						</div>
 							<div class="form-group col-md-6">
 								<label for="exampleInputRent">Rent</label>
 								<input type="text" name="rent" class="form-control form-control-user" id="rent" placeholder="Rent">
-								<?php echo form_error('rent', '<span class="error">', '</span>'); ?>
-								<span class="error-message" id ="rent_error"></span>
+		  						<span class="error-message" id ="rent_error"></span>
 							</div>
 						</div>
 
@@ -530,16 +590,11 @@
 		</div>
 		</div>`;
 		response += `</div> `;
-
-
-
-
 		$('.user_dash').html('');
 		$('.user_dash').html(response);
 	}
 
 	function book_tower() {
-
 		var response = `<div class="card o-hidden border-0 shadow-lg my-5">
 		<div class="card-body p-0">
 		<!-- Nested Row within Card Body -->
@@ -558,12 +613,9 @@
 											Select Owner If You're not
 													<?php echo form_error('type', '<span class="error">', '</span>'); ?><span class="error-message"></span>
 												</div>
-											 
 										</div>
-
 						<div class="form-row">
 							 ` + button('save', 'primary', 'Save') + button('cancel', 'danger', 'Cancel') + `
-							 
 						</div>
 					</form>
 					<hr>
@@ -578,6 +630,124 @@
 
 
 		$('.user_dash').html('');
+		$('.user_dash').html(response);
+	}
+
+	function input_field(label = '', type = 'text', name = '', placeholder = 'Enter Here') {
+
+		return `<div class="form-group col-md-6">
+								<label for="flatNameInput">` + label + `</label>
+								<input type="` + type + `" name="` + name + `" class="form-control form-control-user" id="` + name +
+			`" aria-describedby="` + name + `Help" placeholder="` + placeholder + `">
+								<span class="error-message" id ="` + name + `_error"></span>
+								<?php echo form_error('first_name', '<span class="error">', '</span>'); ?><span class="error-message"></span>
+
+							</div>`
+	}
+
+	function show_employees() {
+		var response = ` <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Office</th>
+                                            <th>Age</th>
+                                            <th>Start date</th>
+                                            <th>Salary</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Office</th>
+                                            <th>Age</th>
+                                            <th>Start date</th>
+                                            <th>Salary</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        <tr>
+                                            <td>Tiger Nixon</td>
+                                            <td>System Architect</td>
+                                            <td>Edinburgh</td>
+                                            <td>61</td>
+                                            <td>2011/04/25</td>
+                                            <td>$320,800</td>
+                    	                    </tr>
+                                         
+                                    </tbody>
+                                </table>
+                            </div>`;
+		$('.card-body').html('');
+		$('.card-body').html(response);
+	}
+
+	function user_ajax() {
+		var response = `<div class="card o-hidden border-0 shadow-lg my-5">
+			<div class="card-body p-0">
+				<!-- Nested Row within Card Body -->
+				<div class="row">
+					<!-- <div class="col-lg-6 d-none d-lg-block bg-login-image"></div> -->
+					<div class="col-lg-12">
+						<div class="p-5">
+							<form  method='post' id="book_user_form_new"  onsubmit="return preventFormUser()">
+								<div class	="form-row">
+									` + input_field(label = 'First Name', type = 'text', name = 'first_name', placeholder =
+				'Enter First Name...') + `
+									` + input_field(label = 'Last Name', type = 'text', name = 'last_name', placeholder = 'Enter Last Name...') + `
+									` + input_field(label = 'Email', type = 'email', name = 'email', placeholder = 'Enter Email...') + `
+									` + input_field(label = 'Contact No:', type = 'text', name = 'contact_no', placeholder =
+				'Enter Contact Number...') + `
+									<div class="form-group col-md-6">
+										<label for="benefitsCheckbox">Role</label>
+										<select class="form-select <?php echo form_error('role') ? 'is-invalid' : ''; ?>" id="role" name="role">
+											<option value="">Select Type</option>
+											<option value="1" <?php echo set_select('role', '1', isset($role) && $role == '1'); ?>>
+												Admin
+											</option>
+											<option value="2" <?php echo set_select('role', '2', isset($role) && $role == '2'); ?>>
+												Manager
+											</option>
+											<option value="3" <?php echo set_select('role', '3', isset($role) && $role == '3'); ?>>
+												Customer
+											</option>
+											<option value="5" <?php echo set_select('role', '5', isset($role) && $role == '5'); ?>>
+												Employee
+											</option>
+										</select><span class="error-message"  id ="role_error"></span>
+										<?php echo form_error('flat_type', '<span class="error">', '</span>'); ?>
+									</div>` +
+			input_field(label = 'Password', type = 'password', name = 'password', placeholder =
+				'Enter Confirm Password...') + `` +
+			input_field(label = 'Confirm Password', type = 'password', name = 'confirm_password', placeholder =
+				'Enter Password...') + ` 
+							</div>
+								<div class="form-row">
+									<div class="form-group col-md-6">
+										<button name="submit" value="save" class="btn btn-primary btn-user btn-block ">
+											Save
+										</button>
+									</div>
+									<div class="form-group col-md-6">
+										<button name="submit" value="cancel" class="btn btn-danger btn-user btn-block ">
+											Cancel
+										</button>
+									</div>
+								</div>
+							</form>
+							<hr>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>`;
+		$('.user_dash').html('');
+
+
+
 		$('.user_dash').html(response);
 	}
 </script>
