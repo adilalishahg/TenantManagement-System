@@ -242,6 +242,77 @@ class Main extends MY_Controller
 			// $this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
 		}
 	}
+	public function employees_ajax()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+			// print_r($_POST);
+			if (isset($_POST['del_id'])) {
+
+				$where = array(
+					'user_id' => $_POST['del_id']
+				);
+				// Save to database using the model
+				$employee = $this->Db_Model->delete_data(TBL_USER, $where);
+
+				print json_encode(['status' => 'success', 'message' => 'User Deleted']);
+			}
+			if (isset($_POST['id'])) {
+
+				$where = array(
+					'user_id' => $_POST['id']
+				);
+				// Save to database using the model
+				$employee = $this->Db_Model->get_data(TBL_USER, $where, '', '', $type = 1);
+
+				print json_encode(['status' => 'success', 'data' => $employee[0]]);
+			}
+			if (isset($_POST['edit_id'])) {
+
+				$this->form_validation->set_rules('first_name', 'First Name', 'required');
+				$this->form_validation->set_rules('last_name', 'Last', 'required');
+				$this->form_validation->set_rules('email', 'Email', 'required');
+				$this->form_validation->set_rules('role', 'Role', 'required');
+				$this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+				$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]');
+				if ($this->form_validation->run() === false) {
+					// Form validation failed
+
+					$errors = $this->form_validation->error_array();
+					// print_r($errors);
+					print json_encode(['status' => 'error', 'message' => 'Validation failed', 'errors' => $errors]);
+					return;
+				} else {
+					$where = array(
+						'user_id' => $_POST['edit_id']
+					);
+					$data = array(
+						'first_name' => $_POST['edit_id'],
+						'last_name' => $_POST['last_name'],
+						'email' => $_POST['edit_id'],
+						'contact_no' => $_POST['contact_no'],
+						'plainPassword' => $_POST['password'],
+						'password' => bcrypt($_POST['password']),
+						'confirm_password' => bcrypt($_POST['password'])
+					);
+					// Save to database using the model
+					$employee = $this->Db_Model->update_data(TBL_USER, $data, $where);
+
+					print json_encode(['status' => 'success', 'data' => $employee[0]]);
+				}
+			}
+			exit;
+		} else {
+
+
+			$where = 'type=2 or type=5';
+			$users = $this->Db_Model->get_data(TBL_USER, $where, '', '', $type = 1);
+			echo json_encode(['users' => $users]);
+			exit;
+			// $this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
+		}
+	}
 	public function book_tower()
 	{
 
@@ -425,7 +496,8 @@ class Main extends MY_Controller
 					'plainPassword' => $_POST['password'],
 					'type' => $_POST['role'],
 				);
-
+				// print_r($data);
+				// exit;
 				// Save to database using the model
 				$user_id = $this->Db_Model->save_data(TBL_USER, $data);
 

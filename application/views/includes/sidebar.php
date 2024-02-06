@@ -6,7 +6,26 @@
 	.collapse-item:hover {
 		cursor: pointer;
 	}
+
+	#edit {
+		cursor: pointer;
+		background-color: greenyellow;
+		color: black;
+		border-radius: 5px;
+		padding: 5px;
+		font-weight: 600;
+	}
+
+	#delete {
+		cursor: pointer;
+		background-color: red;
+		color: white;
+		border-radius: 5px;
+		padding: 5px;
+		font-weight: 600;
+	}
 </style>
+
 <!-- Sidebar -->
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -86,17 +105,24 @@
 		<div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
 			<div class="bg-white py-2 collapse-inner rounded">
 				<h6 class="collapse-header">Modules:</h6>
-				<?php if ($_SESSION['role'] !=  '3' && $_SESSION['role'] != '5') {
+				<?php
+
+
+				if ($_SESSION['role'] !=  '3' && $_SESSION['role'] != '5') {
 				?>
 
 					<!-- <a class="collapse-item" href="user">User Register</a> -->
 					<a class="collapse-item" onclick="loadModule('user_ajax')">User Register</a>
 					<a class="collapse-item" onclick="loadModule('book_flat_ajax')"> Flat Register</a>
 					<a class="collapse-item" onclick="loadModule('book_tower_ajax')"> Tower Register</a>
-					<a class="collapse-item" onclick="loadModule('employees_ajax')"> Employees</a>
 
 
-				<?php } else { ?>
+
+					<?php
+					if ($_SESSION['role'] == '1') { ?>
+						<a class="collapse-item" onclick="loadModule('employees_ajax')">Employees</a>
+					<?php }
+				} else { ?>
 
 					<a class="collapse-item" href="register_flat">Register Flat</a>
 				<?php }
@@ -142,11 +168,23 @@
 	</div>
 </ul>
 <script>
+	window.addEventListener('popstate', function(event) {
+		alert('asd')
+		// Make your AJAX call here
+		event.preventDefault();
+		loadModule('main_ajax')
+	});
 	// Use jQuery to attach an event listener to the form
 	let route_selected = localStorage.getItem('route_selected');
 	$(document).ready(function() {
+		// Event listener for the popstate event
+
 		console.log(route_selected)
 		if (route_selected) {
+			if (route_selected == 'user_edit_ajax') {
+				let user_data = localStorage.getItem('user_data');
+				user_edit_ajax(JSON.parse(user_data))
+			}
 			loadModule(route_selected)
 		}
 		if (!route_selected || route_selected == '' || route_selected == null) {
@@ -206,6 +244,43 @@
 		return false
 	}
 
+	function preventFormUserUpdate(e) {
+
+		var form = document.querySelector('form');
+		$('#cancel').click(function() {
+			document.getElementById("edit_user_form").reset();
+			$('.error-message').html('')
+			return false;
+		})
+		const url = ("<?php echo AURL; ?>employees_ajax")
+		var formData = $('#edit_user_form').serialize();
+		$.ajax({
+			type: "POST",
+			url: url, // Replace with your server endpoint
+			data: formData,
+			success: function(response) {
+				let res = JSON.parse(response);
+				// Handle the success response 
+				if (res.status == 'error') {
+					// console.log(res)
+					showError(res.errors)
+				}
+				if (res.status == 'success') {
+					swal(res.message + "!", res.message, "success");
+					document.getElementById("book_tower_form").reset();
+
+				}
+
+			},
+			error: function(error) {
+				// Handle the error
+				console.log("Ajax request failed");
+				console.log(error);
+			}
+		});
+		return false
+	}
+
 	function preventFormTower(e) {
 		var form = document.querySelector('form');
 		$('#cancel').click(function() {
@@ -214,7 +289,7 @@
 			return false;
 		})
 		var formData = $('#book_tower_form').serialize();
-		console.log(formData)
+		conszole.log(formData)
 		if ($("#tower").val().trim() === "") {
 			$("#tower_error").text("Tower Name cannot be empty");
 			ret = false;
@@ -436,7 +511,28 @@
 				// console.log(select_owner)
 			} else if (val == 'employees_ajax') {
 				headingElement.textContent = 'Employees List';
-				show_employees()
+				var {
+					users
+				} = data
+				let rows = '';
+				users.forEach((user, index) => {
+					// owner_options +=
+					// 	`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
+					var role_user = employee_type(user.type)
+					rows += `<tr>` +
+						`<td>` + (index + 1) + `</td> ` +
+						`<td>` + user.first_name + ` ` + user.last_name + `</td> ` +
+						`<td>` + user.email + `</td> ` +
+						`<td>` + user.contact_no + `</td> ` +
+						`<td>` + role_user + `</td> ` +
+						`<td><a class='btn btn-info'  onclick="edit_employee(` + user.user_id +
+						`)">Edit</a> <a class='btn btn-danger'  onclick="delete_employee(` + user.user_id +
+						`)">Delete</a></td> ` +
+						`</tr>`;
+					// console.log(user)
+				})
+				console.log(rows)
+				show_employees(rows)
 
 				// let owner_options = tower_options = '';
 				// data.forEach((user) => {
@@ -470,6 +566,59 @@
 				// console.log(select_owner)
 			}
 		})
+	}
+
+	function edit_employee(id) {
+		$.ajax({
+			type: "POST",
+			url: "employees_ajax", // Replace with your server endpoint
+			data: {
+				id: id
+			},
+			success: function(response) {
+				let res = JSON.parse(response);
+
+				if (res.status == 'success') {
+
+					user_edit_ajax(res.data);
+
+				}
+
+			},
+			error: function(error) {
+				// Handle the error
+				console.log("Ajax request failed");
+				console.log(error);
+			}
+		});
+
+	}
+
+	function delete_employee(id) {
+		$.ajax({
+			type: "POST",
+			url: "employees_ajax", // Replace with your server endpoint
+			data: {
+				del_id: id
+			},
+			success: function(response) {
+				let res = JSON.parse(response);
+
+				if (res.status == 'success') {
+					swal(res.message + "!", res.message, "success");
+					loadModule('employees_ajax')
+					// user_edit_ajax(res.data);
+
+				}
+
+			},
+			error: function(error) {
+				// Handle the error
+				console.log("Ajax request failed");
+				console.log(error);
+			}
+		});
+
 	}
 
 	function card(type = 'primary', text = '', value = '', font_awesome = '', ratio = false) {
@@ -633,11 +782,12 @@
 		$('.user_dash').html(response);
 	}
 
-	function input_field(label = '', type = 'text', name = '', placeholder = 'Enter Here') {
+	function input_field(label = '', type = 'text', name = '', placeholder = 'Enter Here', value = '') {
 
 		return `<div class="form-group col-md-6">
 								<label for="flatNameInput">` + label + `</label>
-								<input type="` + type + `" name="` + name + `" class="form-control form-control-user" id="` + name +
+								<input type="` + type + `" name="` + name + `"  value="` + value +
+			`" class="form-control form-control-user" id="` + name +
 			`" aria-describedby="` + name + `Help" placeholder="` + placeholder + `">
 								<span class="error-message" id ="` + name + `_error"></span>
 								<?php echo form_error('first_name', '<span class="error">', '</span>'); ?><span class="error-message"></span>
@@ -645,44 +795,53 @@
 							</div>`
 	}
 
-	function show_employees() {
-		var response = ` <div class="table-responsive">
+	function show_employees(rows) {
+		var response = `<div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Employees </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
+                                            <th>Email</th>
+                                            <th>Contact</th>
+                                            <th>Role</th>
+                                            <th>option</th>
+                                             
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
+                                            <th>#</th>
                                             <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
+                                            <th>Email</th>
+                                            <th>Contact</th>
+                                            <th>Role</th>
+                                            <th>option</th>
+                                             
                                         </tr>
                                     </tfoot>
                                     <tbody>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
-                    	                    </tr>
-                                         
+                                       ` + rows + `
+                                        
                                     </tbody>
                                 </table>
-                            </div>`;
-		$('.card-body').html('');
-		$('.card-body').html(response);
+                            </div>
+                        </div>
+                    </div>
+
+                </div> `;
+		$('.user_dash').html('');
+		$('.user_dash').html(response);
+
+		// Initialize DataTable after adding the HTML to the DOM
+		$(document).ready(function() {
+			$('#dataTable').DataTable();
+		});
 	}
 
 	function user_ajax() {
@@ -745,11 +904,107 @@
 			</div>
 		</div>`;
 		$('.user_dash').html('');
-
-
-
 		$('.user_dash').html(response);
 	}
+
+	function user_edit_ajax(data) {
+		console.log(data)
+		localStorage.setItem('route_selected', 'user_edit_ajax')
+		localStorage.setItem('user_data', JSON.stringify(data))
+		document.getElementById('route_heading').innerHTML = 'Edit Employee';
+		var response = `<div class="card o-hidden border-0 shadow-lg my-5">
+			<div class="card-body p-0">
+				<!-- Nested Row within Card Body -->
+				<div class="row">
+					<!-- <div class="col-lg-6 d-none d-lg-block bg-login-image"></div> -->
+					<div class="col-lg-12">
+						<div class="p-5">
+							<form  method='post' id="edit_user_form"  onsubmit="return preventFormUserUpdate()">
+								<div class	="form-row"><input type='hidden' name = 'edit_id' value ='` + data.user_id + `' />
+									` + input_field(label = 'First Name', type = 'text', name = 'first_name',
+				placeholder =
+				'Enter First Name...', value = data.first_name) + `
+									` + input_field(label = 'Last Name', type = 'text', name = 'last_name', placeholder = 'Enter Last Name...',
+				value = data.last_name) + `
+									` + input_field(label = 'Email', type = 'email', name = 'email', placeholder = 'Enter Email...',
+				value = data.email) + `
+									` + input_field(label = 'Contact No:', type = 'text', name = 'contact_no', placeholder =
+				'Enter Contact Number...', value = data.contact_no) + `
+									<div class="form-group col-md-6">
+										<label for="benefitsCheckbox">Role</label>
+										<select class="form-select   id="role" name="role">
+											<option value="">Select Type</option>
+											<option value="1" ` + (data.type == 1 ? 'selected' : '') + ` >
+												Admin
+											</option>
+											<option value="2"  ` + (data.type == 2 ? 'selected' : '') + `>
+												Manager
+											</option>
+											<option value="3" ` + (data.type == 3 ? 'selected' : '') + ` >
+												Customer
+											</option>
+											<option value="5"` + (data.type == 5 ? 'selected' : '') + ` >
+												Employee
+											</option>
+										</select><span class="error-message"  id ="role_error"></span>
+										<?php echo form_error('flat_type', '<span class="error">', '</span>'); ?>
+									</div>` +
+			input_field(label = 'Password', type = 'password', name = 'password', placeholder =
+				'Enter Confirm Password...', '') + `` +
+			input_field(label = 'Confirm Password', type = 'password', name = 'confirm_password', placeholder =
+				'Enter Password...', '') + ` 
+							</div>
+								<div class="form-row">
+									<div class="form-group col-md-6">
+										<button name="submit" value="update" class="btn btn-primary btn-user btn-block ">
+											Update
+										</button>
+									</div>
+									<div class="form-group col-md-6">
+										<button name="submit" value="cancel" class="btn btn-danger btn-user btn-block ">
+											Cancel
+										</button>
+									</div>
+								</div>
+							</form>
+							<hr>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>`;
+		$('.user_dash').html('');
+		$('.user_dash').html(response);
+	}
+
+	function employee_type(val) {
+		switch (val) {
+			case 1:
+				return 'Admin';
+				// code block to execute if expression matches value1
+				break;
+			case 2:
+				return 'Manager';
+				// code block to execute if expression matches value1
+				break;
+			case 3:
+				return 'Customer';
+				// code block to execute if expression matches value1
+				break;
+			case 4:
+				return 'Manager';
+				// code block to execute if expression matches value1
+				break;
+			case 4:
+				return 'Employee';
+				// code block to execute if expression matches value1
+				break;
+			default:
+				return 'Employee';
+		}
+	}
 </script>
+
+
 
 <!-- End of Sidebar -->
