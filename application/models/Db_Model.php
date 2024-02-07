@@ -16,6 +16,36 @@ class Db_Model extends CI_Model
 		$get = $this->db->get(TBL_RENT);
 		return ($get->result_array());
 	}
+	public function get_booked_flat_by_user($where = '')
+	{
+
+		// Your SQL query using the Query Builder
+		// $this->db->select(TBL_RENT . '.*,' . TBL_FLAT . ' .*');
+		// $this->db->from(TBL_RENT);
+		// $this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id = ' . TBL_RENT . '.flat_id', 'left');
+		// $this->db->where($where);
+
+		// Your SQL query using the Query Builder
+		$this->db->select(TBL_RENT . '.* ,' . TBL_FLAT . '.* ');
+		$this->db->from(TBL_RENT);
+		$this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id = ' . TBL_RENT . '.flat_id', 'left');
+		$this->db->where(TBL_FLAT . '.owner_id', $_SESSION['user_id']);
+		// $this->db->select(TBL_RENT . '.*');
+		// $this->db->select(TBL_FLAT . '.*');
+		// $this->db->join(TBL_RENT, TBL_FLAT . '.flat_id =' . TBL_RENT . ' .flat_id', 'left');
+		// $this->db->where($where);
+
+		$get = $this->db->get();
+
+
+		$result = ($get->result_array());
+
+
+		// Get the count of records
+		$count = $this->db->count_all_results('monthly_rent');
+
+		return ['count' => $count, 'result' => $result];
+	}
 	public function get_data($table, $where = array(), $order_by = null, $limit = null, $type = 0, $select = '*')
 	{
 		$this->db->select($select);

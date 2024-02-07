@@ -106,7 +106,7 @@ class Main extends MY_Controller
 		if ($_SESSION['role']  != '3' && $_SESSION['role']  != '5') {
 			// Get the current date
 			$currentDate = date('Y-m-d');
-
+			$data['user'] = $_SESSION['user_id'];
 			// Calculate the date one month ago
 			$oneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($currentDate)));
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 MONTH)"`;
@@ -114,10 +114,20 @@ class Main extends MY_Controller
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 YEAR)"`;
 			$data['year'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
 
-			$data['booked'] = $this->Db_Model->get_data(TBL_RENT, $where = '', '', '', $type = 1, $select = 'DISTINCT(flat_id) as booked')[0]['booked'];
-			$data['total_flats'] = $this->Db_Model->get_data(TBL_FLAT, $where = '', '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0]['total_flats'];
+			// $data['booked'] = $this->Db_Model->get_data(TBL_RENT, $where = '', '', '', $type = 1, $select = 'DISTINCT(flat_id) as booked')[0]['booked'];
+			$data['booked'] = $this->Db_Model->get_booked_flat_by_user();
 
-			$data['ratio'] = ($data['booked'] / $data['total_flats']) * 100;
+			$where_flats = array(
+				'owner_id' => $_SESSION['user_id']
+			);
+			// echo json_encode($this->Db_Model->get_booked_flat_by_user($where_flats));
+			// exit;
+
+			$data['total_flats'] = $this->Db_Model->get_data(TBL_FLAT, $where_flats, '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0]['total_flats'];
+			$data['booked_flats'] = $data['booked']['count'];
+
+			$data['ratio'] = ($data['booked_flats'] / $data['total_flats']) * 100;
+
 
 			echo json_encode($data);
 			exit;
