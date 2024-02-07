@@ -59,7 +59,7 @@ class Main extends MY_Controller
 	public function index()
 	{
 		// print_r('asd');
-		// exit;
+
 
 		if ($_SESSION['role']  != '3' && $_SESSION['role']  != '5') {
 			// Get the current date
@@ -117,6 +117,8 @@ class Main extends MY_Controller
 			// $data['booked'] = $this->Db_Model->get_data(TBL_RENT, $where = '', '', '', $type = 1, $select = 'DISTINCT(flat_id) as booked')[0]['booked'];
 			$data['booked'] = $this->Db_Model->get_booked_flat_by_user();
 
+			// $query = $this->db->last_query();
+			// echo $query;
 			$where_flats = array(
 				'owner_id' => $_SESSION['user_id']
 			);
@@ -124,11 +126,13 @@ class Main extends MY_Controller
 			// exit;
 
 			$data['total_flats'] = $this->Db_Model->get_data(TBL_FLAT, $where_flats, '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0]['total_flats'];
-			$data['booked_flats'] = $data['booked']['count'];
-
-			$data['ratio'] = ($data['booked_flats'] / $data['total_flats']) * 100;
+			$data['booked_flats'] = $data['booked']['result'];
 
 
+			if ($data['total_flats'] && $data['total_flats'] != '0') {
+
+				$data['ratio'] = ($data['booked_flats'] / $data['total_flats']) * 100;
+			}
 			echo json_encode($data);
 			exit;
 			$this->load->view('welcome_message', $data);
@@ -208,7 +212,7 @@ class Main extends MY_Controller
 			$this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
 		}
 	}
-	public function book_flat_ajax()
+	public function register_flat_ajax()
 	{
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -425,7 +429,45 @@ class Main extends MY_Controller
 
 			$where = 'status = 1';
 			$data['flats'] = $this->Db_Model->get_data(TBL_FLAT, $where, '', '', $type = 1);
+			print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $data]);
+			exit;
+			$this->load->view('flat/flats', $data);
+		}
+	}
+	public function book_flat_ajax()
+	{
+		// $where = array(
+		// 	'status' => '1'
+		// );
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$data = array(
+				'flat_id' => $_POST['flatId'],
+			);
+			$flatData = $this->Db_Model->get_data(TBL_FLAT, $where = $data, $order_by = null, $limit = null, $type = 1);
+			// print_r($flatData);
+			// Save to database using the model
+			$rent_data = array(
+				'flat_id' => $_POST['flatId'],
+				'tenant_id' => $_POST['userId'],
+				'amount' => $flatData[0]['rent'],
+			);
+			$where = array(
+				'flat_id' => $_POST['flatId']
+			);
+			$data = array(
+				'status' => '2'
+			);
+			$user_id = $this->Db_Model->update_data(TBL_FLAT, $data, $where);
+			$user_id = $this->Db_Model->save_data(TBL_RENT, $rent_data);
 
+			print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
+		} else {
+
+			$where = 'status = 1';
+			$data['flats'] = $this->Db_Model->get_data(TBL_FLAT, $where, '', '', $type = 1);
+			$data['current_user'] = $_SESSION['user_id'];
+			print json_encode(['status' => 'success', 'message' => 'Avaialable Flats', 'data' => $data]);
+			exit;
 			$this->load->view('flat/flats', $data);
 		}
 	}

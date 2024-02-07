@@ -29,7 +29,7 @@ function formatTime(inputTime) {
 
             <!-- Main Content -->
             <div id="content">
-
+                <div class="loader"></div>
                 <!-- Topbar -->
                 <?php include_once("includes/navbar.php"); ?>
                 <!-- End of Topbar -->
@@ -39,7 +39,7 @@ function formatTime(inputTime) {
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">
+                        <h1 class="h3 mb-0 text-gray-800 user_dashboard">
                             <?php echo (ucfirst($_SESSION['first_name']) . ' ' . ucfirst($_SESSION['last_name']) . ' '); ?>
                             Dashboard
                         </h1>
@@ -55,50 +55,49 @@ function formatTime(inputTime) {
                     <div class="row h-100">
 
                         <!-- Basic Card Example -->
-                        <div class="card shadow mb-4 h-4 w-100">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Your Booking Detail</h6>
-                            </div>
-                            <div class="card-body">
+                        <!-- <div class="card shadow mb-4 h-4 w-100">
+							<div class="card-header py-3">
+								<h6 class="m-0 font-weight-bold text-primary route_heading">Your Booking Detail</h6>
+							</div>
+							<div class="card-body row">
 
-                                <!-- Pending Requests Card Example -->
-                                <?php foreach ($booking as $book) { ?>
-                                <div class=" col-6 mb-4" id="<?php echo 	$book['flat_id']; ?>">
-                                    <div class="card border-left-warning shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div
-                                                        class="text-s font-weight-bold text-primary text-uppercase mb-1">
-                                                        Rent : RS <?php echo $book['amount']; ?> </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"> Booked At :
-                                                        <?php
+								<!-- Pending Requests Card Example  
+								<?php foreach ($booking as $book) { ?>
+									<div class="   col-lg-6 mb-4" id="<?php echo 	$book['flat_id']; ?>">
+										<div class="card border-left-warning shadow h-100 py-2">
+											<div class="card-body">
+												<div class="row no-gutters align-items-center">
+													<div class="col mr-2">
+														<div class="text-s font-weight-bold text-primary text-uppercase mb-1">
+															Rent : RS <?php echo $book['amount']; ?> </div>
+														<div class="h5 mb-0 font-weight-bold text-gray-800"> Booked At :
+															<?php
 															$bookedTime = $book['created_at'];
 															echo '<script>document.write(formatTime("' . $bookedTime . '"));calculateDays("' . $bookedTime . '");</script>';
 															?></div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"> Flat :
-                                                        <?php if ($book['type'] == 'A') {
+														<div class="h5 mb-0 font-weight-bold text-gray-800"> Flat :
+															<?php if ($book['type'] == 'A') {
 																echo '5 Star Room';
 															} else {
 																echo 'Classic Room';
 															} ?>
-                                                        <br />
-                                                        This Month Passed Days :<?php echo $book['passedDays']; ?>
-                                                        <br />
-                                                        Your Spent Days :<?php echo $book['spentDays']; ?>
-                                                        <br />
-                                                        This Month Pending Days :<?php echo $book['pendingDays']; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <?php } ?>
-                            </div>
-                        </div>
+															<br />
+															This Month Passed Days :<?php echo $book['passedDays']; ?>
+															<br />
+															Your Spent Days :<?php echo $book['spentDays']; ?>
+															<br />
+															This Month Pending Days :<?php echo $book['pendingDays']; ?>
+														</div>
+													</div>
+													<div class="col-auto">
+														<i class="fas fa-comments fa-2x text-gray-300"></i>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div> <?php } ?>
+							</div>
+						</div> -->
                     </div>
 
 

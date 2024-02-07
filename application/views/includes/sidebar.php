@@ -167,7 +167,30 @@
 			Pro!</a>
 	</div>
 </ul>
+
+<div class="modal fade" id="flatModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Book This Flat</h5>
+				<input type='hidden' name='booking_id' id='booking_id'>
+				<input type='hidden' name='booker_name' id='booker_name'>
+				<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<!-- Use a placeholder element to dynamically set the modal content -->
+			<div class="modal-body" id="flatmodalContent"></div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+				<a class="btn btn-primary" id="flatBookButton" href="#">Book</a>
+			</div>
+		</div>
+	</div>
+</div>
 <script>
+	// Show loader when an AJAX request starts
+
 	window.addEventListener('popstate', function(event) {
 
 		// Make your AJAX call here
@@ -462,15 +485,28 @@
 	}
 
 	function loadModule(val) {
-
+		$('.loader').show();
 		localStorage.setItem('route_selected', val)
 		$.get(val, function(data, status) {
+			$('.loader').hide();
 			const headingElement = document.querySelector('.h3.mb-0.text-gray-800.route_heading');
+			let flatEl = document.querySelector('.h3.mb-0.text-gray-800.user_dashboard');
 			var data = JSON.parse(data);
+
 			if (val == 'main_ajax') {
-				headingElement.textContent = 'Dashboard';
-				var res_route_html = load_dashboard(data)
-				console.log(res_route_html)
+				if (headingElement) {
+
+					console.log('headingElement')
+					headingElement.textContent = 'Dashboard';
+					var res_route_html = load_dashboard(data)
+
+				}
+				if (flatEl) {
+					console.log('flatEl')
+					flatEl.textContent = 'Dashboard';
+					var res_route_html = load_user_dashboard(data)
+				}
+
 			} else if (val == 'register_flat_ajax') {
 				headingElement.textContent = 'Book Flat';
 				load_tower()
@@ -549,6 +585,25 @@
 			} else if (val == 'user_ajax') {
 				headingElement.textContent = 'User Registration';
 				user_ajax()
+
+				let owner_options = tower_options = '';
+				console.log(data)
+				data.users.forEach((user) => {
+
+					owner_options +=
+						`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
+				})
+
+				var select_owner = (select('owner', owner_options))
+				// var select_tower = (select('tower', tower_options))
+
+				$('#owner_div').html(select_owner)
+				// $('#tower_div').html(select_tower)
+				// console.log(select_owner)
+			} else if (val == 'book_flat_ajax') {
+
+				flatEl.textContent = 'Book Flat From Given';
+				book_flat_ajax(data)
 
 				let owner_options = tower_options = '';
 				console.log(data)
@@ -659,19 +714,161 @@
 		return resp
 	}
 
-	function load_dashboard(data) {
+	function formatTime(inputTime) {
+		const date = new Date(inputTime);
 
-		const booked_ratio = ' ' + data.booked.count + ` /` + data.total_flats + ' '
-		var res_dashboard = `<div class="row">`;
-		res_dashboard += card('primary', 'EARNINGS (MONTHLY)', '$' + data.year, 'fa-calendar');
-		res_dashboard += card('primary', 'EARNINGS (Annual)', '$' + data.year, 'fa-calendar');
-		res_dashboard += card('info', 'Booked/Total Flats', booked_ratio, 'fa-clipboard-list', data.ratio);
-		res_dashboard += ` </div>`;
-		$('.user_dash').html('');
-		$('.user_dash').html(res_dashboard);
-		// console.log(res_dashboard)
+		const options = {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		};
+
+		return new Intl.DateTimeFormat('en-GB', options).format(date);
+	}
+
+
+	function book_flat_ajax(data) {
+
+		const flats = data.data.flats
+		const current_user = data.data.current_user
+		console.log(flats)
+		var response = '';
+		if (Array.isArray(flats)) {
+			flats.forEach(element => {
+
+				console.log(element)
+				flat_stat = 'Normal'
+				book_stat = 'Available'
+				if (element.type === 'A') {
+					flat_stat = 'Luxuary'
+				}
+				if (element.status !== '1') {
+					book_stat = 'Booked'
+				}
+				response += `
+						<div class="col-xl-4 col-md-6 mb-4 " id="flat_` + element.flat_id + `">
+                            <div class="card border-left-primary shadow h-100 py-4">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                ` + flat_stat + ` Flat</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">RS- ` + element.rent + ` </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                             ` + book_stat +
+					` </div>
+                                        </div>
+                                        <div class="col-auto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Book Now">
+                                            <!-- -->
+                                            <button id="flat_5" onclick = "selectFlatPopUp('` + element.flat_id +
+					`','` +
+					flat_stat +
+					`','` + element.rent + `','` + current_user +
+					`')" type="button" class="select-flat flat btn btn-primary btn-sm rounded-circle tooltip-content" data-toggle="modal" data-name="` +
+					flat_stat + ` Flat" data-price="` + element.rent + `" data-user="` + current_user + `">
+                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            </button>
+                                            <!-- <i class="fa-brands fa-flickr"></i> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+		`;
+				// flattened = flattened.concat(flattenArray(element));
+			})
+		}
+
+
+		$('.row').removeClass('h-100');
+		$('.row').html('');
+		$('.row').html(response);
 
 	}
+
+	function selectFlatPopUp(id, status, rent, user) {
+
+		var flatName = $("flat_" + id).data("name");
+		var selectedFlatFromPopUp = id;
+		var price = $(this).attr('data-price');
+		$('#booking_id').val(selectedFlatFromPopUp)
+		$('#booker_name').val(user)
+		// Set the modal content dynamically
+		$('#flatmodalContent').text('Do You want to book flat: ' + status + ' of rent :' +
+			rent);
+
+		// Show the modal
+		$('#flatModal').modal('show');
+	}
+
+	$('#flatBookButton').on('click', function() {
+		// Add your custom function logic here
+		console.log('Logout button clicked for element with ID:', $('#booking_id').val());
+		var booking_id = $('#booking_id').val();
+		var userName = $('#booker_name').val();
+		// Close the modal	
+		bookFlat(booking_id, userName)
+		// $('#flatModal').modal('hide');
+	});
+
+	function bookFlat(booking_id, userName) {
+		$('#flatModal').modal('hide');
+
+		var formData = {
+			flatId: booking_id,
+			userId: userName,
+		}
+		$.ajax({
+			type: 'POST',
+			url: '<?php echo base_url(); ?>register_flat',
+			data: formData,
+			success: function(response) {
+				// Handle successful submission (you can redirect or show a success message)
+				swal("Flat Registered!", "Flat Registered Successfully!", "success");
+				loadModule('book_flat_ajax')
+
+			},
+			error: function(xhr, status, error) {
+
+
+				swal("Oops!", "Something went wrong", "error");
+
+
+
+				var errors = JSON.parse(xhr.responseText);
+
+				$('.error-message').html('');
+
+				// Display errors for each field
+				$.each(errors, function(key, value) {
+					$('#' + key).next('.error-message').html(
+						'<span class="text-danger">' + value + '</span>');
+				});
+			}
+		});
+	}
+	// $('.select-flat').on('click', function() {
+
+	//     // Use the 'this' keyword to reference the clicked element
+
+	//     if ($(this).hasClass('flat')) {
+	//         // Use the 'this' keyword to reference the clicked element
+	//         clickedElementId = $(this).attr('id');
+	//         var faltName = $(this).attr('data-name');
+
+	//         var price = $(this).attr('data-price');
+
+	//         // Set the modal content dynamically
+	//         $('#flatmodalContent').text('Do You want to book flat: ' + faltName + ' of rent :' +
+	//             price);
+
+	//         // Show the modal
+	//         $('#flatModal').modal('show');
+	//     }
+	// });
 
 	function load_tower() {
 

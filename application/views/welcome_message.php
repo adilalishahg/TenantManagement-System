@@ -13,7 +13,7 @@
 
             <!-- Main Content -->
             <div id="content">
-
+                <div class="loader"></div>
                 <!-- Topbar -->
                 <?php include_once("includes/navbar.php"); ?>
                 <!-- End of Topbar -->

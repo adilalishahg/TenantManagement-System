@@ -49,7 +49,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'main';
+$route['default_controller'] = 'main_ajax';
 $route['main_ajax'] = 'main/main_ajax';
 $route['login'] = 'auth/login';
 $route['register'] = 'auth/register';
@@ -61,7 +61,7 @@ $route['register_flat'] = 'main/register_flat';
 $route['register_flat_ajax'] = 'main/register_flat_ajax';
 $route['employees_ajax'] = 'main/employees_ajax';
 $route['book_tower_ajax'] = 'main/book_tower_ajax';
-// $route['book_flat_ajax'] = 'main/register_flat_ajax';
+$route['book_flat_ajax'] = 'main/book_flat_ajax';
 $route['user'] = 'main/user';
 $route['user_ajax'] = 'main/user_ajax';
 $route['user_ajax2'] = 'main/user_ajax2';

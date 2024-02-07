@@ -26,25 +26,37 @@ class Db_Model extends CI_Model
 		// $this->db->where($where);
 
 		// Your SQL query using the Query Builder
-		$this->db->select(TBL_RENT . '.* ,' . TBL_FLAT . '.* ');
+		$this->db->select('COUNT(' . TBL_RENT . '.id) as booked');
+		// $this->db->select('COUNT(monthly_rent.id) as booked');
 		$this->db->from(TBL_RENT);
+		// $this->db->from('monthly_rent');
+		// $this->db->join('tbl_flats', 'tbl_flats.flat_id = monthly_rent.flat_id', 'left');
 		$this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id = ' . TBL_RENT . '.flat_id', 'left');
+		// $this->db->where('tbl_flats.owner_id', 27);
 		$this->db->where(TBL_FLAT . '.owner_id', $_SESSION['user_id']);
-		// $this->db->select(TBL_RENT . '.*');
-		// $this->db->select(TBL_FLAT . '.*');
-		// $this->db->join(TBL_RENT, TBL_FLAT . '.flat_id =' . TBL_RENT . ' .flat_id', 'left');
-		// $this->db->where($where);
-
 		$get = $this->db->get();
 
 
+		// $this->db->select(TBL_RENT . '.* ,' . TBL_FLAT . '.* ');
+		// $this->db->from(TBL_RENT);
+		// $this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id = ' . TBL_RENT . '.flat_id', 'left');
+		// $this->db->where(TBL_FLAT . '.owner_id', $_SESSION['user_id']);
+		// // $this->db->select(TBL_RENT . '.*');
+		// // $this->db->select(TBL_FLAT . '.*');
+		// // $this->db->join(TBL_RENT, TBL_FLAT . '.flat_id =' . TBL_RENT . ' .flat_id', 'left');
+		// // $this->db->where($where);
+
+		// $get = $this->db->get();
+
+
 		$result = ($get->result_array());
+		// $query = $this->db->last_query();
+		// echo $query;
 
+		// // Get the count of records
+		// $count = $this->db->count_all_results('monthly_rent');
 
-		// Get the count of records
-		$count = $this->db->count_all_results('monthly_rent');
-
-		return ['count' => $count, 'result' => $result];
+		return ['result' => $result[0]['booked']];
 	}
 	public function get_data($table, $where = array(), $order_by = null, $limit = null, $type = 0, $select = '*')
 	{
