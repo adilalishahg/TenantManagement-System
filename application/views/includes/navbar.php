@@ -175,17 +175,18 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id='profile_user_name'>
                     <?php echo ucfirst($_SESSION['first_name']);
 					echo ' ';
 					echo (ucfirst($_SESSION['last_name'])); ?></span>
-                <img class="img-profile rounded-circle" src=<?php echo 
-				isset($_SESSION['profile_pic']) ? base_url().$_SESSION['profile_pic'] :
-				base_url("assets/img/undraw_profile.svg") ?>>
+                <img class="img-profile rounded-circle " id='profile_img_nav' src=<?php echo
+																					isset($_SESSION['profile_pic']) ? base_url() . $_SESSION['profile_pic'] :
+																						base_url("assets/img/undraw_profile.svg") ?>>
             </a>
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="<?php base_url(); ?>profile">
+                <!-- <a class="dropdown-item" href="<?php base_url(); ?>profile"> -->
+                <a class="dropdown-item" onclick="loadModule('profile_ajax')">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Profile
                 </a>

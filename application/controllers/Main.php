@@ -307,13 +307,14 @@ class Main extends MY_Controller
 						'email' => $_POST['edit_id'],
 						'contact_no' => $_POST['contact_no'],
 						'plainPassword' => $_POST['password'],
-						'password' => bcrypt($_POST['password']),
-						'confirm_password' => bcrypt($_POST['password'])
+						'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)
 					);
 					// Save to database using the model
 					$employee = $this->Db_Model->update_data(TBL_USER, $data, $where);
+					$lastQuery = $this->db->last_query();
 
-					print json_encode(['status' => 'success', 'data' => $employee[0]]);
+					// print json_encode(['status' => 'success', 'data' => $employee[0]]);
+					print json_encode(['status' => 'success', 'data' => 'User Updated successfully', 'message' => 'User Updated successfully']);
 				}
 			}
 			exit;
@@ -465,6 +466,7 @@ class Main extends MY_Controller
 
 			$where = 'status = 1';
 			$data['flats'] = $this->Db_Model->get_data(TBL_FLAT, $where, '', '', $type = 1);
+			$data['users'] = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
 			$data['current_user'] = $_SESSION['user_id'];
 			print json_encode(['status' => 'success', 'message' => 'Avaialable Flats', 'data' => $data]);
 			exit;
@@ -581,7 +583,7 @@ class Main extends MY_Controller
 			$confirm_password = $_REQUEST['confirm_password'];
 			// print_r($_FILES);
 			// exit;
-			$img = 'assets/uploads/' . $this->uploadImage()['file_name'];
+			$img = 'assets/uploads/' . $this->uploadImage($_FILES)['file_name'];
 
 
 
@@ -642,13 +644,88 @@ class Main extends MY_Controller
 			$this->load->view('profile/profile', $data);
 		}
 	}
-
-	public function uploadImage()
+	public function profile_ajax()
 	{
+		// print_r($_SESSION);
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			// echo '<pre/>';
+
+			$first_name = $_REQUEST['first_name'];
+			$last_name = $_REQUEST['last_name'];
+			$contact_number = $_REQUEST['contactno'];
+			$email = $_REQUEST['email'];
+			$confirm_password = $_REQUEST['confirm_password'];
+
+			$img = 'assets/uploads/' . $this->profileUploadImage($_FILES)['file_name'];
+
+
+
+
+			$ret = $this->validateForm();
+
+			if ($ret == 1) {
+				$hashedPassword = password_hash($confirm_password, PASSWORD_BCRYPT);
+				if ($img) {
+
+					$data = array(
+						'first_name' => $first_name,
+						'last_name' => $last_name,
+						'email' => $email,
+						'contact_no' => $contact_number,
+						'profile_img' => $img,
+						'password' => $hashedPassword, // Hash the password
+						'plainPassword' => $confirm_password, // Hash the password
+					);
+				} else {
+					$data = array(
+						'first_name' => $first_name,
+						'last_name' => $last_name,
+						'email' => $email,
+						'contact_no' => $contact_number,
+
+						'password' => $hashedPassword, // Hash the password
+						'plainPassword' => $confirm_password, // Hash the password
+					);
+				}
+
+				$where = array('user_id' => $_SESSION['user_id']);
+
+
+				// Save to database using the model
+				$user_id = $this->Db_Model->update_data(TBL_USER, $data, $where);
+
+
+				if ($user_id) {
+
+					// $this->load->library('session');
+					// $this->session->set_userdata('user_id', $user_id);
+					// $this->session->set_userdata('first_name', $first_name);
+					// $this->session->set_userdata('last_name', $last_name);
+					if ($img) {
+						$this->session->set_userdata('profile_pic', $img);
+					}
+					// $this->session->set_userdata('role', $role);
+					// print_r($_SESSION);
+
+					print json_encode(['status' => 'success', 'message' => 'Updated']);
+					return;
+				}
+			}
+		} else {
+			$data = $this->Db_Model->getCurrentUser(TBL_USER, array('user_id' => $_SESSION['user_id']));
+			echo json_encode($data);
+			exit;
+			$this->load->view('profile/profile', $data);
+		}
+	}
+
+	public function uploadImage($img)
+	{
+
 		$imageData = $this->input->post('image');
-		// print_r($imageData);
-		// exit;
-		if (!empty($_FILES['image']['name'])) {
+
+		if (!empty($img['name'])) {
 
 
 			// Decode base64-encoded binary data
@@ -672,10 +749,38 @@ class Main extends MY_Controller
 				exit;
 			}
 		}
+	}
+	public function profileUploadImage($img)
+	{
+
+		$imageData = $this->input->post('image');
+
+		if (!empty($img['image'])) {
 
 
-		// Respond with a success message or any other data
-		// echo json_encode(['message' => 'Image uploaded successfully', 'path' => $directory]);
+
+			// Decode base64-encoded binary data
+			$binaryData = base64_decode($imageData);
+
+			// Save the binary data to a file (you may want to generate a unique filename)
+			$directory = $config['upload_path']  =  'assets/uploads/';
+			// $config['max_size'] = 12048;
+			$config['allowed_types'] = 'gif|jpg|png|jpeg';
+			$this->load->library('upload', $config);
+
+			if ($this->upload->do_upload('image')) {
+
+				// File uploaded successfully, you can get file info
+				return $this->upload->data();
+				// Now $imageData contains information about the uploaded file
+
+			} else {
+				// File upload failed, handle errors
+				// echo $this->upload->display_errors();
+				echo json_encode(['status' => 'img_error', 'errors' => $this->upload->display_errors()]);
+				exit;
+			}
+		}
 	}
 
 	function isDirExist($folderPath)

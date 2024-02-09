@@ -66,5 +66,6 @@ $route['user'] = 'main/user';
 $route['user_ajax'] = 'main/user_ajax';
 $route['user_ajax2'] = 'main/user_ajax2';
 $route['profile'] = 'main/profile';
+$route['profile_ajax'] = 'main/profile_ajax';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
