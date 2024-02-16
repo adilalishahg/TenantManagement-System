@@ -197,19 +197,11 @@
 <script>
 var ajaxUrl = '<?php echo AURL; ?>';
 // Show loader when an AJAX request starts
-
-window.addEventListener('popstate', function(event) {
-
-    // Make your AJAX call here
-    event.preventDefault();
-    loadModule('main_ajax')
-});
+ 
 // Use jQuery to attach an event listener to the form
-let route_selected = localStorage.getItem('route_selected');
 $(document).ready(function() {
-    // Event listener for the popstate event
-
-    console.log(route_selected)
+	// Event listener for the popstate event
+	let route_selected = localStorage.getItem('route_selected');  
     if (route_selected) {
         if (route_selected == 'user_edit_ajax') {
             let user_data = localStorage.getItem('user_data');

@@ -176,6 +176,8 @@ function showError(errors) {
 function loadModule(val) {
 	$(".loader").show();
 	localStorage.setItem("route_selected", val);
+	// console.log(val)
+	 
 	$.get(val, function (data, status) {
 		$(".loader").hide();
 		const headingElement = document.querySelector(

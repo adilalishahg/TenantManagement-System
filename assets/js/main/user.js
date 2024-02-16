@@ -285,7 +285,7 @@ function image_address(img) {
 	return false;
 }
 function profile_ajax(data) {
-	console.log(data.profile_img);
+	// console.log(data.profile_img);
 	var img_profile = image_address(data.profile_img)
 		? data.profile_img
 		: "https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg";
@@ -365,7 +365,7 @@ function profile_ajax(data) {
 	profile_res += `									<button name="submit" value="save" class="btn btn-primary btn-user btn-block ">Save</button>`;
 	profile_res += `								</div>`;
 	profile_res += `								<div class="form-group col-md-6">`;
-	profile_res += `									<button name="reset" value="reset"  class="btn btn-danger btn-user btn-block ">Reset</button>`;
+	profile_res += `									<button name="reset" value="reset" id='cancel'  class="btn btn-danger btn-user btn-block ">Reset</button>`;
 	profile_res += `								</div>`;
 	profile_res += `							</div>`;
 	profile_res += `						</form>`;
@@ -377,7 +377,10 @@ function profile_ajax(data) {
 	profile_res += `	</div>`;
 	profile_res += `</div>`;
 	$(".row").html("");
+	$(".user_dash").html("");
 	$(".row").html(profile_res);
+	// console.log(profile_res)
+	$(".user_dash").html(profile_res);
 }
 function displaySelectedImage(event, elementId) {
 	const selectedImage = document.getElementById(elementId);

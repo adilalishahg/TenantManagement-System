@@ -4,16 +4,22 @@
 class Db_Model extends CI_Model
 {
 
-	public function booking_detail($user, $select = '*')
+	public function booking_detail($user, $where = '')
 	{
+		if ($where) {
 
+
+			$this->db->where($where);
+		}
 		$this->db->select(TBL_RENT . '.*');
-		// $this->db->select(TBL_USER . '.*');
 		$this->db->select(TBL_FLAT . '.*');
 		// $this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id =' . TBL_RENT . ' .flat_id', 'left');
 		$this->db->join(TBL_USER, TBL_RENT . '.tenant_id =' . TBL_USER . ' .user_id', 'left');
 		$this->db->join(TBL_FLAT, TBL_RENT . '.flat_id =' . TBL_FLAT . ' .flat_id', 'left');
 		$get = $this->db->get(TBL_RENT);
+
+		$query = $this->db->last_query();
+		// echo $query;
 		return ($get->result_array());
 	}
 	public function get_booked_flat_by_user($where = '')
@@ -47,11 +53,11 @@ class Db_Model extends CI_Model
 		// // $this->db->where($where);
 
 		// $get = $this->db->get();
-
-
-		$result = ($get->result_array());
 		// $query = $this->db->last_query();
 		// echo $query;
+
+		$result = ($get->result_array());
+
 
 		// // Get the count of records
 		// $count = $this->db->count_all_results('monthly_rent');

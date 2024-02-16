@@ -138,19 +138,32 @@ class Main extends MY_Controller
 			$this->load->view('welcome_message', $data);
 		}
 		if ($_SESSION['role']  == '3') {
-			$data['booking'] =  $this->Db_Model->booking_detail($_SESSION['user_id']);
+			$where = TBL_RENT . '.tenant_id  ="' . $_SESSION['user_id'] . '"';
+			// print_r($where);
+			$data['booking'] =  $this->Db_Model->booking_detail($_SESSION['user_id'], $where);
+			// $data['booking'] =  $this->Db_Model->get_booked_flat_by_user($_SESSION['user_id']);
 
-			foreach ($data['booking'] as $key => &$value) {
-				// print_r($value);
-				$return = ($this->calculateDays($value['created_at']));;
-				$value['spentDays'] = $return['spentDays'];
-				$value['passedDays'] = $return['passedDays'];
-				$value['pendingDays'] = $return['pendingDays'];
-				// echo "Pending Days: $pendingDays, Passed Days: $passedDays, Spent Days: $spentDays";
+			// print_r($data['booking']);
+			if ($data['booking']) {
+
+				foreach ($data['booking'] as $key => &$value) {
+					// print_r($value);
+					$return = ($this->calculateDays($value['created_at']));;
+					$value['spentDays'] = $return['spentDays'];
+					$value['passedDays'] = $return['passedDays'];
+					$value['pendingDays'] = $return['pendingDays'];
+					// echo "Pending Days: $pendingDays, Passed Days: $passedDays, Spent Days: $spentDays";
+				}
+
+				echo json_encode($data);
+				exit;
+			} else {
+				echo '0';
+				exit;
 			}
-			echo json_encode($data);
-			exit;
+
 			$this->load->view('user_dashboard', $data);
+		} else {
 		}
 	}
 
