@@ -64,6 +64,51 @@ class Db_Model extends CI_Model
 
 		return ['result' => $result[0]['booked']];
 	}
+	public function get_booked_data($where = '')
+	{
+		$this->db->select('SUM(' . TBL_RENT . '.amount) as total');
+		// $this->db->select('COUNT(monthly_rent.id) as booked');
+		$this->db->from(TBL_RENT);
+		// $this->db->from('monthly_rent');
+		// $this->db->join('tbl_flats', 'tbl_flats.flat_id = monthly_rent.flat_id', 'left');
+		$this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id = ' . TBL_RENT . '.flat_id', 'left');
+		// $this->db->where('tbl_flats.owner_id', 27);
+		// print_r($_SESSION);
+		if ($_SESSION['role'] != '1' && $_SESSION['role'] != '2' && $_SESSION['role'] != '4') {
+
+			$this->db->where(TBL_FLAT . '.owner_id', $_SESSION['user_id']);
+		}
+		// if ($where) {
+		// 	$this->db->where($where);
+		// }
+		$get = $this->db->get();
+		// $query = $this->db->last_query();
+		// print_r($query);
+		// exit;
+
+
+
+		// $this->db->select(TBL_RENT . '.* ,' . TBL_FLAT . '.* ');
+		// $this->db->from(TBL_RENT);
+		// $this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id = ' . TBL_RENT . '.flat_id', 'left');
+		// $this->db->where(TBL_FLAT . '.owner_id', $_SESSION['user_id']);
+		// // $this->db->select(TBL_RENT . '.*');
+		// // $this->db->select(TBL_FLAT . '.*');
+		// // $this->db->join(TBL_RENT, TBL_FLAT . '.flat_id =' . TBL_RENT . ' .flat_id', 'left');
+		// // $this->db->where($where);
+
+		// $get = $this->db->get();
+		// $query = $this->db->last_query();
+		// echo $query;
+
+		$result = ($get->result_array());
+		// print_r($result);
+		// exit;
+		// // Get the count of records
+		// $count = $this->db->count_all_results('monthly_rent');
+
+		return ['result' => $result[0]['total']];
+	}
 	public function get_data($table, $where = array(), $order_by = null, $limit = null, $type = 0, $select = '*')
 	{
 		$this->db->select($select);
@@ -82,6 +127,9 @@ class Db_Model extends CI_Model
 		}
 
 		$query = $this->db->get();
+
+		// $query = $this->db->last_query();
+		// echo $query;
 		if ($type == 1) {
 
 			return ($query->result_array());

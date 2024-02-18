@@ -68,9 +68,11 @@ class Main extends MY_Controller
 			// Calculate the date one month ago
 			$oneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($currentDate)));
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 MONTH)"`;
-			$data['total'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
+			$select = 'sum(amount) as total ';
+			$data['total'] = $this->Db_Model->get_booked_data('');
+			// echo $query;
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 YEAR)"`;
-			$data['year'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
+			$data['year'] = $this->Db_Model->get_booked_data($where);
 
 			$data['booked'] = $this->Db_Model->get_data(TBL_RENT, $where = '', '', '', $type = 1, $select = 'DISTINCT(flat_id) as booked')[0]['booked'];
 			$data['total_flats'] = $this->Db_Model->get_data(TBL_FLAT, $where = '', '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0]['total_flats'];
@@ -110,7 +112,9 @@ class Main extends MY_Controller
 			// Calculate the date one month ago
 			$oneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($currentDate)));
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 MONTH)"`;
-			$data['total'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
+			// $data['total'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
+			$data['total'] = $data['total_monthly'] = $this->Db_Model->get_booked_data()['result'];
+
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 YEAR)"`;
 			$data['year'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
 

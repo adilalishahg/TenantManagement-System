@@ -52,13 +52,14 @@ function load_user_dashboard(data) {
 }
 
 function load_dashboard(data) {
+	console.log("data");
 	console.log(data);
 	const booked_ratio = " " + data.booked.result + ` /` + data.total_flats + " ";
 	var res_dashboard = `<div class="row">`;
 	res_dashboard += card(
 		"primary",
 		"EARNINGS (MONTHLY)",
-		"$" + data.year,
+		"$" + data.total_monthly,
 		"fa-calendar"
 	);
 	res_dashboard += card(
