@@ -82,7 +82,7 @@ function user_ajax() {
 										</button>
 									</div>
 									<div class="form-group col-md-6">
-										<button name="submit" value="cancel" class="btn btn-danger btn-user btn-block ">
+										<button name="submit" value="cancel" id="cancel" class="btn btn-danger btn-user btn-block ">
 											Cancel
 										</button>
 									</div>
@@ -123,6 +123,7 @@ function delete_employee(id) {
 }
 
 function preventFormUser(e) {
+	// console.log("asd");
 	var form = document.querySelector("form");
 	$("#cancel").click(function () {
 		document.getElementById("book_user_form_new").reset();
