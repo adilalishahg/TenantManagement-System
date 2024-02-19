@@ -5,7 +5,7 @@ function load_user_dashboard(data) {
 	res += '	<div class="card shadow mb-4 h-4 w-100">';
 	res += '		<div class="card-header py-3">';
 	res +=
-		'			<h6 class="m-0 font-weight-bold text-primary route_heading">Your Booking Detail</h6>';
+		'		 	<h6 class="m-0 font-weight-bold text-primary route_heading">Your Booking Detail</h6>';
 	res += "		</div>";
 	res += '		<div class="card-body row">';
 

@@ -251,6 +251,7 @@ class Main extends MY_Controller
 				$data = array(
 					'tower_id' => $_POST['tower'],
 					'type' => $_POST['flat_type'],
+					'flat_name' => $_POST['flat_name'],
 					'rent' => $_POST['rent'],
 					// 'expense' => '123',
 					'owner_id' => $_POST['owner'], // Hash the password
@@ -258,9 +259,16 @@ class Main extends MY_Controller
 				);
 
 				// Save to database using the model
-				$user_id = $this->Db_Model->save_data(TBL_FLAT, $data);
+				if (isset($_POST['flat_id']) && $_POST['flat_id']) {
+					$user_id = $this->Db_Model->update_data(TBL_FLAT, $data, $_POST['flat_id']);
+					$mesg = 'Updated';
+				} else {
+					$mesg = 'Registered';
 
-				print json_encode(['status' => 'success', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
+					$user_id = $this->Db_Model->save_data(TBL_FLAT, $data);
+				}
+
+				print json_encode(['status' => 'success', 'message' => 'Flat ' . $mesg . ' successfully', 'data' => $user_id]);
 				return;
 			}
 		} else {
@@ -448,6 +456,74 @@ class Main extends MY_Controller
 			$where = 'status = 1';
 			$data['flats'] = $this->Db_Model->get_data(TBL_FLAT, $where, '', '', $type = 1);
 			print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $data]);
+			exit;
+			$this->load->view('flat/flats', $data);
+		}
+	}
+	public function edit_flat_ajax()
+	{
+		$flat_id = $_POST['id'];
+		$where = 'flat_id = ' . $flat_id;
+		$data['flats'] = $this->Db_Model->get_data(TBL_FLAT, $where, '', '', $type = 1)[0];
+
+		$data['user_list'] = $this->Db_Model->get_data(TBL_USER, '', '', '', $type = 1, 'user_id,first_name,last_name');
+		$data['towers_list'] = $this->Db_Model->get_data(TBL_TOWER, '', '', '', $type = 1, 'id,tower_name');
+		echo json_encode($data);
+		exit;
+	}
+	public function delete_flat_ajax()
+	{
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+			// print_r($_POST);
+			if (isset($_POST['del_id'])) {
+
+				$where = array(
+					'flat_id' => $_POST['del_id']
+				);
+				// Save to database using the model
+				$employee = $this->Db_Model->delete_data(TBL_FLAT, $where);
+				$where = 'owner_id=' . $_SESSION['user_id'];
+				$data['flats'] = $this->Db_Model->get_flat_and_tower();
+				// $data['users'] = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
+				$data['current_user'] = $_SESSION['user_id'];
+				print json_encode(['status' => 'success', 'message' => 'Flat Deleted Successfully', 'data' => $data]);
+			}
+		}
+	}
+	public function get_flats_ajax()
+	{
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			echo 1;
+			exit;
+			$data = array(
+				'flat_id' => $_POST['flatId'],
+			);
+			$flatData = $this->Db_Model->get_data(TBL_FLAT, $where = $data, $order_by = null, $limit = null, $type = 1);
+			// print_r($flatData);
+			// Save to database using the model
+			$rent_data = array(
+				'flat_id' => $_POST['flatId'],
+				'tenant_id' => $_POST['userId'],
+				'amount' => $flatData[0]['rent'],
+			);
+			$where = array(
+				'flat_id' => $_POST['flatId']
+			);
+			$data = array(
+				'status' => '2'
+			);
+			$user_id = $this->Db_Model->update_data(TBL_FLAT, $data, $where);
+			$user_id = $this->Db_Model->save_data(TBL_RENT, $rent_data);
+
+			print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
+		} else {
+
+			$where = 'owner_id=' . $_SESSION['user_id'];
+			$data['flats'] = $this->Db_Model->get_flat_and_tower();
+			// $data['users'] = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
+			$data['current_user'] = $_SESSION['user_id'];
+			print json_encode(['status' => 'success', 'message' => 'Avaialable Flats', 'data' => $data]);
 			exit;
 			$this->load->view('flat/flats', $data);
 		}

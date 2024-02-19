@@ -76,7 +76,7 @@
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
         <?php
-
+ 
 
         if ($_SESSION['role'] !=  '3' && $_SESSION['role'] != '5') {
         ?>
@@ -298,77 +298,6 @@
     //         $('#flatModal').modal('show');
     //     }
     // });
-
-    function load_tower() {
-
-        var response = `<div class="card o-hidden border-0 shadow-lg my-5">
-		<div class="card-body p-0">
-		<!-- Nested Row within Card Body -->
-		<div class="row">
-			<!-- <div class="col-lg-6 d-none d-lg-block bg-login-image"></div> -->
-			<div class="col-lg-12">
-				<div class="p-5">
-					<form class="user" method="post" id="book_flat_form"  onsubmit="return preventFormFlat()">
-						<div class="form-row">
-
-							<div class="form-group col-md-6">
-								<label for="flatNameInput">Flat Name</label>
-								<input type="text" name="flat_name" class="form-control form-control-user" id="flatNameInput" aria-describedby="flatNameHelp" placeholder="Enter Flat Name...">
-								<span class="error-message" id ="flat_name_error"></span>
-	  						</div>
-
-							<div class="form-group col-md-6">
-								<label for="benefitsCheckbox">Flat Type</label>
-								<select class="form-select <?php echo form_error('flat_type') ? 'is-invalid' : ''; ?>" id="flat_type" name="flat_type">
-									<option value="">Select Type</option>
-									<option value="1" <?php echo set_select('flat_type', '1', isset($flat_type) && $flat_type == '1'); ?>>
-										Luxury
-									</option>
-									<option value="2" <?php echo set_select('flat_type', '2', isset($flat_type) && $flat_type == '2'); ?>>
-										Simple
-									</option>
-								</select><span class="error-message" id ="flat_type_error"></span>
-     						 </div>
-							<div class="form-group col-md-6" id='tower_div'>
-								 
-							</div>
-							<div class="form-group col-md-6">
-								<label for="Status">Status</label>
-
-								<select class="form-select" id="status" name="status">
-									<option value="">Select Status</option>
-									<option value="1" <?php echo set_select('status', '1', isset($status) && $status == '1'); ?>>
-										Vacant</option>
-									<option value="2" <?php echo set_select('status', '2', isset($status) && $status == '2'); ?>>
-										Hired</option>
-
-								</select><span class="error-message" id ="status_error"></span>
-	  						</div>
-							<div class="form-group col-md-6" id='owner_div'>
-
-	  						</div>
-							<div class="form-group col-md-6">
-								<label for="exampleInputRent">Rent</label>
-								<input type="text" name="rent" class="form-control form-control-user" id="rent" placeholder="Rent">
-		  						<span class="error-message" id ="rent_error"></span>
-							</div>
-						</div>
-
-						<div class="form-row">
-							 ` + button('save', 'primary', 'Save') + button('cancel', 'danger', 'Cancel') + `
-							 
-						</div>
-					</form>
-					<hr>
-				</div>
-			</div>
-		</div>
-		</div>
-		</div>`;
-        response += `</div> `;
-        $('.user_dash').html('');
-        $('.user_dash').html(response);
-    }
 
 
 

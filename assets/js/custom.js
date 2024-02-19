@@ -176,8 +176,7 @@ function showError(errors) {
 function loadModule(val) {
 	$(".loader").show();
 	localStorage.setItem("route_selected", val);
-	// console.log(val)
-	 
+
 	$.get(val, function (data, status) {
 		$(".loader").hide();
 		const headingElement = document.querySelector(
@@ -187,7 +186,6 @@ function loadModule(val) {
 			".h3.mb-0.text-gray-800.user_dashboard"
 		);
 		var data = JSON.parse(data);
-
 		if (val == "main_ajax") {
 			if (headingElement) {
 				console.log("headingElement");
@@ -201,22 +199,7 @@ function loadModule(val) {
 			}
 		} else if (val == "register_flat_ajax") {
 			headingElement.textContent = "Book Flat";
-			load_tower();
-			var { users, towers } = data;
-
-			let owner_options = (tower_options = "");
-			users.forEach((user) => {
-				owner_options += `<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`;
-			});
-			towers.forEach((tower) => {
-				tower_options += `<option value="${tower.id}">${tower.tower_name} </option>`;
-			});
-			var select_owner = select("owner", owner_options);
-			var select_tower = select("tower", tower_options);
-
-			$("#owner_div").html(select_owner);
-			$("#tower_div").html(select_tower);
-			// console.log(select_owner)
+			load_flat(data);
 		} else if (val == "book_tower_ajax") {
 			headingElement.textContent = "Book Tower";
 			book_tower();
@@ -230,7 +213,13 @@ function loadModule(val) {
 
 			$("#owner_div").html(select_owner);
 			// $('#tower_div').html(select_tower)
-			// console.log(select_owner)
+		} else if (val == "get_flats_ajax") {
+			if (flatEl) {
+				flatEl.textContent = "Flats";
+			} else {
+				headingElement.textContent = "Flats";
+			}
+			get_flats_ajax(data);
 		} else if (val == "profile_ajax") {
 			if (flatEl) {
 				flatEl.textContent = "Profile";
