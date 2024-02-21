@@ -1,6 +1,7 @@
 <?php include_once("includes/header.php"); ?>
 <script>
 	localStorage.removeItem("route_selected");
+	localStorage.setItem("login_time", Date.now())
 </script>
 
 <body class="bg-gradient-primary">
@@ -138,7 +139,7 @@
 
 			//         gravity: gravity, // Position: "top", "bottom", "left", "right"
 			//         position: position, // Position
-			within the gravity: "center", "left", "right"
+			// within the gravity: "center", "left", "right"
 			//         backgroundColor: backgroundColor, // Customize the background color
 			//     }).showToast();
 			// }

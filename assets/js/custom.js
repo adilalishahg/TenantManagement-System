@@ -173,9 +173,34 @@ function showError(errors) {
 		// console.log(`${key}: ${errors[key]}`);
 	});
 }
+function checkTimeDifference(time) {
+	var currentTimestamp = Date.now();
+	var oneHourInMilliseconds = 3600 * 1000;
+	var timeDifference = currentTimestamp - time;
+	var isOneHourPassed = timeDifference >= oneHourInMilliseconds;
+	console.log(timeDifference);
+	if (isOneHourPassed) {
+		localStorage.removeItem("route_selected");
+		localStorage.removeItem("login_time");
+		$.get("logout_ajax", function (data, status) {
+			if (data) {
+				window.location.href = "login";
+			}
+		});
+	} else {
+		localStorage.setItem("login_time", Date.now());
+	}
+}
 function loadModule(val) {
 	$(".loader").show();
+
 	localStorage.setItem("route_selected", val);
+	let loginTime = localStorage.getItem("login_time");
+	if (loginTime) {
+		checkTimeDifference(loginTime);
+	} else {
+		localStorage.setItem("login_time", Date.now());
+	}
 
 	$.get(val, function (data, status) {
 		$(".loader").hide();
@@ -220,6 +245,13 @@ function loadModule(val) {
 				headingElement.textContent = "Flats";
 			}
 			get_flats_ajax(data);
+		} else if (val == "get_towers_ajax") {
+			if (flatEl) {
+				flatEl.textContent = "Towers";
+			} else {
+				headingElement.textContent = "Towers";
+			}
+			get_towers_ajax(data);
 		} else if (val == "profile_ajax") {
 			if (flatEl) {
 				flatEl.textContent = "Profile";
