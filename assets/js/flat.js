@@ -258,6 +258,97 @@ function get_flats_ajax(data) {
 		$("#dataTable").DataTable();
 	});
 }
+function get_all_flats_ajax(data) {
+	let row = data.data.flats;
+	console.log(data);
+	let rows = "";
+	row.forEach((user, index) => {
+		// owner_options +=
+		// 	`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
+		var role_user = user.type == "A" ? "Luxuary" : "Normal";
+		var status = user.status == 1 ? "Vacant" : "Booked";
+		console.log(role_user);
+		rows +=
+			`<tr>` +
+			`<td>` +
+			(index + 1) +
+			`</td> ` +
+			`<td>` +
+			user.flat_name +
+			`</td> ` +
+			`<td>` +
+			user.rent +
+			`</td> ` +
+			`<td>` +
+			status +
+			`</td> ` +
+			`<td>` +
+			role_user +
+			`</td> ` +
+			`<td>` +
+			user.tower_name +
+			`</td> ` +
+			`<td><a class='btn btn-info'  onclick="return edit_flat('edit_flat_ajax',` +
+			user.flat_id +
+			`)">Edit</a> <a class='btn btn-danger'  onclick="delete_flat(` +
+			user.flat_id +
+			`)">Delete</a></td> ` +
+			`</tr>`;
+		// console.log(user)
+	});
+	console.log(rows);
+	var response =
+		`<div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Flats </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Rent</th>
+                                            <th>Status</th>
+                                            <th>Flat Type</th>
+                                            <th>Tower</th>
+                                            <th>option</th>
+                                             
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Rent</th>
+                                            <th>Status</th>
+                                            <th>Flat Type</th>
+                                            <th>Tower</th>
+                                            <th>option</th>
+                                             
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                       ` +
+		rows +
+		`
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> `;
+	$(".user_dash").html("");
+	$(".user_dash").html(response);
+
+	// Initialize DataTable after adding the HTML to the DOM
+	$(document).ready(function () {
+		$("#dataTable").DataTable();
+	});
+}
 function selectFlatPopUp(id, status, rent, user) {
 	var flatName = $("flat_" + id).data("name");
 	var selectedFlatFromPopUp = id;

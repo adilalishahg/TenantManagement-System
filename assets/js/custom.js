@@ -238,11 +238,25 @@ function loadModule(val) {
 				headingElement.textContent = "Flats";
 			}
 			get_flats_ajax(data);
+		} else if (val == "get_all_flats_ajax") {
+			if (flatEl) {
+				flatEl.textContent = " All Flats";
+			} else {
+				headingElement.textContent = " All Flats";
+			}
+			get_all_flats_ajax(data);
 		} else if (val == "get_towers_ajax") {
 			if (flatEl) {
 				flatEl.textContent = "Towers";
 			} else {
 				headingElement.textContent = "Towers";
+			}
+			get_towers_ajax(data);
+		} else if (val == "get_all_towers_ajax") {
+			if (flatEl) {
+				flatEl.textContent = "All Towers";
+			} else {
+				headingElement.textContent = "All Towers";
 			}
 			get_towers_ajax(data);
 		} else if (val == "profile_ajax") {

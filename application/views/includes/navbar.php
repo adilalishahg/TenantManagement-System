@@ -10,8 +10,10 @@
     <div class=" inline-block mr-auto ml-3 my-md-0 mw-100">
         <?php
 		if ($_SESSION['role'] != '3') { ?>
-        <button class="btn btn-primary px-5 py-2  " onclick="loadModule('get_flats_ajax')">My Flats</button>
         <button class="btn btn-primary px-5 py-2" onclick="loadModule('get_towers_ajax')">My Towers</button>
+        <button class="btn btn-primary px-5 py-2  " onclick="loadModule('get_flats_ajax')">My Flats</button>
+        <button class="btn btn-primary px-5 py-2" onclick="loadModule('get_all_towers_ajax')">All Towers</button>
+        <button class="btn btn-primary px-5 py-2  " onclick="loadModule('get_all_flats_ajax')">All Flats</button>
         <?php } ?>
         <!-- <button class="btn btn-primary">asd</button> -->
     </div>

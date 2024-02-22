@@ -565,6 +565,80 @@ class Main extends MY_Controller
 			$this->load->view('flat/flats', $data);
 		}
 	}
+	public function get_all_flats_ajax()
+	{
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			echo 1;
+			exit;
+			$data = array(
+				'flat_id' => $_POST['flatId'],
+			);
+			$flatData = $this->Db_Model->get_data(TBL_FLAT, $where = $data, $order_by = null, $limit = null, $type = 1);
+			// print_r($flatData);
+			// Save to database using the model
+			$rent_data = array(
+				'flat_id' => $_POST['flatId'],
+				'tenant_id' => $_POST['userId'],
+				'amount' => $flatData[0]['rent'],
+			);
+			$where = array(
+				'flat_id' => $_POST['flatId']
+			);
+			$data = array(
+				'status' => '2'
+			);
+			$user_id = $this->Db_Model->update_data(TBL_FLAT, $data, $where);
+			$user_id = $this->Db_Model->save_data(TBL_RENT, $rent_data);
+
+			print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
+		} else {
+
+			// $where = 'owner_id=' . $_SESSION['user_id'];
+			$data['flats'] = $this->Db_Model->get_all_flat_and_tower();
+			// $data['users'] = $this->Db_Model->get_data(TBL_USER, $where = '', '', '', $type = 1);
+			$data['current_user'] = $_SESSION['user_id'];
+			print json_encode(['status' => 'success', 'message' => 'All Flats', 'data' => $data]);
+			exit;
+			$this->load->view('flat/flats', $data);
+		}
+	}
+	public function get_all_towers_ajax()
+	{
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			echo 1;
+			exit;
+			$data = array(
+				'flat_id' => $_POST['flatId'],
+			);
+			$flatData = $this->Db_Model->get_data(TBL_FLAT, $where = $data, $order_by = null, $limit = null, $type = 1);
+			// print_r($flatData);
+			// Save to database using the model
+			$rent_data = array(
+				'flat_id' => $_POST['flatId'],
+				'tenant_id' => $_POST['userId'],
+				'amount' => $flatData[0]['rent'],
+			);
+			$where = array(
+				'flat_id' => $_POST['flatId']
+			);
+			$data = array(
+				'status' => '2'
+			);
+			$user_id = $this->Db_Model->update_data(TBL_FLAT, $data, $where);
+			$user_id = $this->Db_Model->save_data(TBL_RENT, $rent_data);
+
+			print json_encode(['status' => 'susscess', 'message' => 'Flat Registered successfully', 'data' => $user_id]);
+		} else {
+
+			// $where = 'owner_id=' . $_SESSION['user_id'];
+			// $data['flats'] = $this->Db_Model->get_all_flat_and_tower();
+			$data['towers'] = $this->Db_Model->get_data(TBL_TOWER, $where = '', '', '', $type = 1);
+			$data['current_user'] = $_SESSION['user_id'];
+			print json_encode(['status' => 'success', 'message' => 'All Flats', 'data' => $data]);
+			exit;
+			$this->load->view('flat/flats', $data);
+		}
+	}
 	public function get_towers_ajax()
 	{
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
