@@ -5,7 +5,7 @@ function book_flat_ajax(data) {
 	var response = "";
 	if (Array.isArray(flats)) {
 		flats.forEach((element) => {
-			console.log(element);
+			// console.log(element);
 			flat_stat = "Normal";
 			book_stat = "Available";
 			if (element.type === "A") {
@@ -64,8 +64,14 @@ function book_flat_ajax(data) {
 			// flattened = flattened.concat(flattenArray(element));
 		});
 	}
-
-	$(".row").removeClass("h-100");
+	if (flats.length == 0) {
+		response = `<div class="row  align-items-center"><h3>No Flat Available</h3></div>`;
+		// Iterate over each element with class '.row'
+		// Iterate over each element with class '.row'
+		add_empty_message_classes();
+	}
+	// console.log(response);
+	// $(".row").removeClass("h-100");
 	$(".row").html("");
 	$(".row").html(response);
 }

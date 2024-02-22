@@ -192,6 +192,7 @@ function checkTimeDifference(time) {
 	}
 }
 function loadModule(val) {
+	remove_empty_message_classes();
 	$(".loader").show();
 
 	localStorage.setItem("route_selected", val);
@@ -227,16 +228,8 @@ function loadModule(val) {
 			load_flat(data);
 		} else if (val == "book_tower_ajax") {
 			headingElement.textContent = "Book Tower";
-			book_tower();
+			book_tower(data);
 
-			let owner_options = (tower_options = "");
-			data.forEach((user) => {
-				owner_options += `<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`;
-			});
-			var select_owner = select("owner", owner_options);
-			// var select_tower = (select('tower', tower_options))
-
-			$("#owner_div").html(select_owner);
 			// $('#tower_div').html(select_tower)
 		} else if (val == "get_flats_ajax") {
 			if (flatEl) {
@@ -355,7 +348,54 @@ function loadModule(val) {
 		}
 	});
 }
+function add_empty_message_classes() {
+	$(".row").each(function () {
+		// Check and add the class '.align'
+		if (!$(this).hasClass("align-content-center")) {
+			$(this).addClass("align-content-center");
+		}
 
+		// Check and add the class '.center'
+		if (!$(this).hasClass("h-100")) {
+			$(this).addClass("h-100");
+		}
+
+		// Check and add the class '.margin'
+		if (!$(this).hasClass("justify-content-center")) {
+			$(this).addClass("justify-content-center");
+		}
+		// Check and add the class '.margin'
+		if (!$(this).hasClass("justify-content-center")) {
+			$(this).addClass("justify-content-center");
+		}
+	});
+}
+function remove_empty_message_classes() {
+	$(".row").each(function () {
+		// Check and add the class '.align'
+		if ($(this).hasClass("align-content-center")) {
+			$(this).removeClass("align-content-center");
+		}
+		// Check and add the class '.align'
+		if ($(this).hasClass("h-100")) {
+			$(this).removeClass("h-100");
+		}
+
+		// Check and add the class '.center'
+		if ($(this).hasClass("h-100")) {
+			$(this).removeClass("h-100");
+		}
+
+		// Check and add the class '.margin'
+		if ($(this).hasClass("justify-content-center")) {
+			$(this).removeClass("justify-content-center");
+		}
+		// Check and add the class '.margin'
+		if ($(this).hasClass("justify-content-center")) {
+			$(this).removeClass("justify-content-center");
+		}
+	});
+}
 function formatTime(inputTime) {
 	const date = new Date(inputTime);
 

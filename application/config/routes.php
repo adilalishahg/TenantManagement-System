@@ -64,6 +64,7 @@ $route['register_flat'] = 'main/register_flat';
 $route['register_flat_ajax'] = 'main/register_flat_ajax';
 $route['edit_flat_ajax'] = 'main/edit_flat_ajax';
 $route['delete_flat_ajax'] = 'main/delete_flat_ajax';
+$route['edit_tower_ajax'] = 'main/edit_tower_ajax';
 $route['delete_tower_ajax'] = 'main/delete_tower_ajax';
 $route['get_towers_ajax'] = 'main/get_towers_ajax';
 $route['employees_ajax'] = 'main/employees_ajax';

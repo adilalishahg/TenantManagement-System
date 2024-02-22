@@ -1,8 +1,8 @@
 function load_user_dashboard(data) {
 	let flats = data.booking;
-	let res = '<div class="h-100">';
+	let res = '<div class="h-100 w-100">';
 
-	res += '	<div class="card shadow mb-4 h-4 w-100">';
+	res += '	<div class="card shadow mb-4 h-4  ">';
 	res += '		<div class="card-header py-3">';
 	res +=
 		'		 	<h6 class="m-0 font-weight-bold text-primary route_heading">Your Booking Detail</h6>';
