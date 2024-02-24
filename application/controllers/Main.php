@@ -714,6 +714,18 @@ class Main extends MY_Controller
 			exit;
 		}
 	}
+	public function checkout_ajax()
+	{
+
+
+		$where = 'flat_id=' . $_GET['id'];
+		$data['booked'] = 'no';
+		$data1['status'] = '1';
+		$user_id = $this->Db_Model->update_data(TBL_RENT, $data, $where);
+		$user_id = $this->Db_Model->update_data(TBL_FLAT, $data1, $where);
+		print json_encode(['status' => 'success', 'message' => 'Checked Out Successfully', 'data' => $user_id]);
+		exit;
+	}
 	public function book_flat_ajax()
 	{
 		// $where = array(

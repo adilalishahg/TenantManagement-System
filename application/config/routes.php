@@ -61,6 +61,7 @@ $route['get_flats_ajax'] = 'main/get_flats_ajax';
 $route['get_all_flats_ajax'] = 'main/get_all_flats_ajax';
 $route['get_towers_ajax'] = 'main/get_towers_ajax';
 $route['get_all_towers_ajax'] = 'main/get_all_towers_ajax';
+$route['checkout_ajax'] = 'main/checkout_ajax';
 $route['book_tower'] = 'main/book_tower';
 $route['register_flat'] = 'main/register_flat';
 $route['register_flat_ajax'] = 'main/register_flat_ajax';
