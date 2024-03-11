@@ -27,6 +27,7 @@
         <!-- Custom styles for this template-->
         <link href=<?php echo base_url("assets/css/sb-admin-2.min.css") ?> rel="stylesheet">
         <link href=<?php echo base_url("assets/css/sb-admin-2.min.css") ?> rel="stylesheet">
+
         <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
         <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
@@ -58,10 +59,5 @@
             }
         }
         </style>
-        <script src="<?php echo base_url('assets/js/dash_board.js'); ?>"></script>
-        <script src="<?php echo base_url('assets/js/flat.js'); ?>"></script>
-        <script src="<?php echo base_url('assets/js/tower.js'); ?>"></script>
-        <script src="<?php echo base_url('assets/js/main/user.js'); ?>"></script>
-        <script src="<?php echo base_url('assets/js/main/employee.js'); ?>"></script>
 
     </head>

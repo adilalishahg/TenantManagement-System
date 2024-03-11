@@ -226,6 +226,9 @@ function loadModule(val) {
 		} else if (val == "register_flat_ajax") {
 			headingElement.textContent = "Book Flat";
 			load_flat(data);
+		}else if (val == "reports_ajax") {
+			headingElement.textContent = "Book Flat";
+			load_reports(data);
 		} else if (val == "book_tower_ajax") {
 			headingElement.textContent = "Book Tower";
 			book_tower(data);
@@ -238,6 +241,14 @@ function loadModule(val) {
 				headingElement.textContent = "Flats";
 			}
 			get_flats_ajax(data);
+		} else if (val == "invoice_ajax") {
+			if (flatEl) {
+				flatEl.textContent = "Invoice";
+			} else {
+				headingElement.textContent = "Invoice";
+			}
+			 
+			testing_invoice_ajax(data);
 		} else if (val == "get_all_flats_ajax") {
 			if (flatEl) {
 				flatEl.textContent = " All Flats";
@@ -266,7 +277,7 @@ function loadModule(val) {
 				headingElement.textContent = "Profile";
 			}
 			profile_ajax(data);
-
+			localStorage.setItem("route_selected", val);
 			// let owner_options = (tower_options = "");
 			// data.forEach((user) => {
 			// 	owner_options += `<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`;
@@ -384,6 +395,120 @@ function add_empty_message_classes() {
 		}
 	});
 }
+function handleYesN(id,route,model_id='',load_module='') {
+	 
+	$("#"+model_id).modal("hide");
+	$.post(route, { id: id }, function (data, status) {
+		$(".loader").hide();
+		let data1 = JSON.parse(data);
+
+		if (data1.status == "error") {
+			showError(data1.errors);
+		}
+		if (data1.status == "success") {
+			swal(data1.message + "!", data1.message, "success");
+		}
+		
+	});
+	// if(route=='pay_invoice_ajax'){
+		loadModule(load_module)
+// 
+	// }
+}
+ 
+function openCustomAlert(
+	modalId = "",
+	heading = "",
+	message = "",
+	handleYes = ""
+) {
+	// Create a unique ID for the modal
+
+	// Remove existing modal if any
+	$("#" + modalId).remove();
+
+	// Create dynamic modal HTML
+	const modalHtml = `
+		<div class="modal fade" id="${modalId}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">${heading}</h5>
+						<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+					${message}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+						<button type="button" class="btn btn-primary" onclick="${handleYes}">Yes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	`;
+
+	// Append modal HTML to the body
+	$("body").append(modalHtml);
+
+	// Show the modal
+	$("#" + modalId).modal("show");
+}
+
+function pop_message_box(
+	id = "",
+	heading = "",
+	headingText = "",
+	hidden1 = "",
+	hidden2 = "",
+	modalContent = "",
+	submitButton = ""
+) {
+	return (
+		`
+	<div class="modal fade" id="` +
+		id +
+		`" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="` +
+		heading +
+		`">` +
+		headingText +
+		`</h5>
+					<input type='hidden' name='` +
+		hidden1 +
+		`' id='` +
+		hidden1 +
+		`'>
+					<input type='hidden' name='` +
+		hidden2 +
+		`' id='` +
+		hidden2 +
+		`'>
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<!-- Use a placeholder element to dynamically set the modal content -->
+				<div class="modal-body" id="` +
+		modalContent +
+		`"></div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+					<a class="btn btn-primary" id="` +
+		submitButton +
+		`" href="#">Book</a>
+				</div>
+			</div>
+		</div>
+	</div>`
+	);
+}
 function remove_empty_message_classes() {
 	$(".row").each(function () {
 		// Check and add the class '.align'
@@ -423,4 +548,105 @@ function formatTime(inputTime) {
 	};
 
 	return new Intl.DateTimeFormat("en-GB", options).format(date);
+}
+function testing_invoice_ajax(data){
+	let row = data.data;
+	console.log(data);
+	let rows = "";
+	row.forEach((user, index) => {
+		// owner_options +=
+		// 	`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
+		// var role_user = user.type == "A" ? "Luxuary" : "Normal";
+		let pay_status = user.paid=='yes' ? "<span class='bg-warning text-danger px-5 py-2 rounded  text-primary font-weight-bolder m-1 '>Paid</span>" : `<a class='btn btn-info rounded m-1 px-5'  onclick="return pay_invoice('pay_invoice_ajax',` +
+		user.id +
+		`)">Pay</a>`;
+ 		rows +=
+			`<tr>` +
+			`<td>` +
+			(index + 1) +
+			`</td> ` +
+			`<td>` +
+			formatTime(user.created_at)+
+			`</td> ` +
+			`<td>` +
+			user.amount +
+			`<td>${pay_status}</td>` +
+			`</tr>`;
+			/*<td>${pay_status}<a class='btn btn-danger'  onclick="delete_invoice(` +
+			  user.id +
+			  `)">Delete</a></td> */
+		// console.log(user)
+	});
+	var response =
+		`<div class="card shadow mb-4 w-100">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Flats </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Booking Date</th>
+                                            <th>Rent</th> 
+                                            <th>option</th>
+                                             
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+										<th>#</th>
+										<th>Booking Date</th>
+										<th>Rent</th> 
+										<th>option</th>
+                                             
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                       ` +
+		rows +
+		`
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> `;
+	$(".row").html("");
+	$(".row").html(response);
+
+	// Initialize DataTable after adding the HTML to the DOM
+	$(document).ready(function () {
+		$("#dataTable").DataTable();
+	});
+}
+
+function pay_invoice(route, id) {
+	 
+	$(".loader").show();
+
+	// localStorage.setItem("route_selected", route);
+	selectFlatPopUp2((id = id), (route = route),'invoice_ajax');
+}
+function selectFlatPopUp2(
+	id = "",
+	route = "", 
+	load_module=''
+) {
+	// openCustomAlert2(
+	// 	(modalId = "invoiceModel"),
+	// 	(heading = "Pay the invoice"),
+	// 	(message = "Click yes to pay the invoice"),
+	// 	(handleYes = "handleYes2('" + id + "','" + route + "')")
+	// );
+	openCustomAlert(
+		modalId = "invoiceModel",
+		heading = "Pay the invoice",
+		message = "Click yes to pay the invoice",
+		handleYes = "handleYesN('" + id + "','" + route + "','invoiceModel','" + load_module + "')"
+	)
+	 
 }

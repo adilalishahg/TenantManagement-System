@@ -28,14 +28,16 @@ $(document).ready(function() {
 // 	select: true
 // });
 </script>
-<script src="assets/js/main/flats.js"></script>
-<script src="assets/js/main/user.js"></script>
-<script src="assets/js/user/custom.js"></script>
-<script src="assets/js/user/flat.js"></script>
-<script src="assets/js/user/dash_board.js"></script>
-<script src="assets/js/tower.js"></script>
-
+<script src=<?php echo base_url("assets/js/main/flats.js") ?>></script>
+<script src=<?php echo base_url("assets/js/main/user.js") ?>></script>
+<script src="<?php echo base_url('assets/js/user/invoice_ajax.js'); ?>"></script>
+<script src="<?php echo base_url('assets/js/main/employee.js'); ?>"></script>
 <script src=<?php echo base_url("assets/js/custom.js") ?>></script>
+<script src=<?php echo base_url("assets/js/dash_board.js") ?>></script>
+<script src=<?php echo base_url("assets/js/flat.js") ?>></script>
+<script src=<?php echo base_url("assets/js/tower.js") ?>></script>
+
+
 <script src=<?php echo base_url("assets/vendor/jquery/jquery.min.js") ?>></script>
 <script src=<?php echo base_url("assets/vendor/bootstrap/js/bootstrap.bundle.min.js") ?>></script>
 

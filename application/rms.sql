@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 29, 2024 at 02:39 PM
+-- Generation Time: Mar 11, 2024 at 05:22 AM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 5.6.40
 
@@ -47,6 +47,8 @@ CREATE TABLE `monthly_rent` (
   `tenant_id` int(11) NOT NULL,
   `flat_id` int(11) NOT NULL,
   `amount` int(11) NOT NULL,
+  `booked` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `paid` enum('yes','no') NOT NULL DEFAULT 'no',
   `expense` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -56,8 +58,8 @@ CREATE TABLE `monthly_rent` (
 -- Dumping data for table `monthly_rent`
 --
 
-INSERT INTO `monthly_rent` (`id`, `tenant_id`, `flat_id`, `amount`, `expense`, `created_at`, `updated_at`) VALUES
-(5, 15, 1, 123, 0, '2024-01-28 21:04:47', '2024-01-28 21:04:47');
+INSERT INTO `monthly_rent` (`id`, `tenant_id`, `flat_id`, `amount`, `booked`, `paid`, `expense`, `created_at`, `updated_at`) VALUES
+(1, 2, 4, 0, 'no', 'yes', 0, '2024-03-09 09:22:56', '2024-03-09 09:22:56');
 
 -- --------------------------------------------------------
 
@@ -67,6 +69,7 @@ INSERT INTO `monthly_rent` (`id`, `tenant_id`, `flat_id`, `amount`, `expense`, `
 
 CREATE TABLE `tbl_flats` (
   `flat_id` int(11) NOT NULL,
+  `flat_name` varchar(200) NOT NULL,
   `tower_id` int(50) NOT NULL,
   `type` enum('A','B','','') NOT NULL COMMENT 'A-5Starr , B-Simple',
   `rent` varchar(100) NOT NULL,
@@ -79,13 +82,10 @@ CREATE TABLE `tbl_flats` (
 -- Dumping data for table `tbl_flats`
 --
 
-INSERT INTO `tbl_flats` (`flat_id`, `tower_id`, `type`, `rent`, `expense`, `owner_id`, `status`) VALUES
-(1, 1, 'A', '123', '123', '123', 'tes'),
-(2, 1, 'A', '123', '123', '123', 'tes'),
-(3, 1, 'A', '123', '123', '123', 'tes'),
-(4, 1, 'A', '123', '123', '123', 'tes'),
-(5, 1, 'A', 'asd', '', '1', '1'),
-(6, 1, 'A', 'asd', '', '1', '1');
+INSERT INTO `tbl_flats` (`flat_id`, `flat_name`, `tower_id`, `type`, `rent`, `expense`, `owner_id`, `status`) VALUES
+(1, 'test', 1, 'B', 'asd', '', '1', '2'),
+(2, 'test', 1, 'B', 'asd', '', '1', '2'),
+(3, 'test', 1, 'B', 'asd', '', '1', '2');
 
 -- --------------------------------------------------------
 
@@ -105,8 +105,10 @@ CREATE TABLE `tbl_tower` (
 --
 
 INSERT INTO `tbl_tower` (`id`, `tower_name`, `owner_id`, `employee_id`) VALUES
-(1, 'asd', 21, 0),
-(2, 'asd', 14, 0);
+(1, 'tes', 1, 0),
+(2, 'tes', 1, 0),
+(3, 'tes', 1, 0),
+(4, 'tes', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -122,7 +124,7 @@ CREATE TABLE `tbl_users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(150) NOT NULL,
   `contact_no` varchar(15) NOT NULL,
-  `type` enum('1','2','3','4') NOT NULL COMMENT '1-Adim,2-Manager,3-Cusomer,4-Manager,5-Employee',
+  `type` enum('1','2','3','4','5') NOT NULL COMMENT '1-Adim,2-Manager,3-Cusomer,4-Manager,5-Employee',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `plainPassword` varchar(50) NOT NULL,
   `profile_img` varchar(200) NOT NULL
@@ -133,9 +135,8 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`user_id`, `first_name`, `last_name`, `username`, `email`, `password`, `contact_no`, `type`, `created_at`, `plainPassword`, `profile_img`) VALUES
-(13, 'adil', 'ali', '', 'adilali@gmail.com', '$2y$10$id820P60qkm.EXE/VSXT9OX2pDLIz0NOLVVcBy.afc1Cb9AUFJtSK', '', '1', '2023-12-05 21:22:58', '', ''),
-(15, 'test', 'test', '', '1adilali1@gmail.com', '$2y$10$SAelUeQZD9yAmzZTQY7Fg.KTnO7JZc.7Fmon4kfb5kFo/m85byf5y', '11111111111', '3', '2023-12-05 21:48:36', 'adil1234', ''),
-(16, 'adil', 'ali', '', '2adilali1@gmail.com', '$2y$10$dlLQnS3/M9Id5IhLIiD6cel1Kp/hPYRPgygrQf4hYGkEnJEWpm7ru', '', '2', '2023-12-05 21:50:04', '123456789', '');
+(1, 'test', 'user', '', 'adilali@gmail.com', '$2y$10$rrXiqOD7veqnQY8ENgmXkuHyKaDceuA/4PIQw5MBeU9c4FSMHuX3u', '111111111', '2', '2024-03-09 08:26:21', '12345678', ''),
+(2, 'test', 'test', '', 'c@gmail.com', '$2y$10$EbLRvozkBTAttoXSIs8xwuwdE/BwvrzCWzT/ibO7rLR.CXqTStN4e', '111111111', '3', '2024-03-09 09:16:15', '12345678', 'assets/uploads/usama10.jpg');
 
 -- --------------------------------------------------------
 
@@ -206,25 +207,25 @@ ALTER TABLE `employee`
 -- AUTO_INCREMENT for table `monthly_rent`
 --
 ALTER TABLE `monthly_rent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `tbl_flats`
 --
 ALTER TABLE `tbl_flats`
-  MODIFY `flat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `flat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_tower`
 --
 ALTER TABLE `tbl_tower`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tenant`

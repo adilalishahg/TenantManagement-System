@@ -64,7 +64,7 @@ class Main extends MY_Controller
 		if ($_SESSION['role']  != '3' && $_SESSION['role']  != '5') {
 			// Get the current date
 			$currentDate = date('Y-m-d');
-
+			$data['ratio']=$data['booked']=$data['total_flats']=0;
 			// Calculate the date one month ago
 			$oneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($currentDate)));
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 MONTH)"`;
@@ -74,11 +74,15 @@ class Main extends MY_Controller
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 YEAR)"`;
 			$data['year'] = $this->Db_Model->get_booked_data($where);
 
-			$data['booked'] = $this->Db_Model->get_data(TBL_RENT, $where = '', '', '', $type = 1, $select = 'DISTINCT(flat_id) as booked')[0]['booked'];
+			$booking = $this->Db_Model->get_data(TBL_RENT, $where = '', '', '', $type = 1, $select = 'DISTINCT(flat_id) as booked');
+ 			if(!empty($booking)&&!empty( $booking[0])){
+
+				$data['booked'] = $booking[0]['booked'];
+			}
 			$data['total_flats'] = $this->Db_Model->get_data(TBL_FLAT, $where = '', '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0]['total_flats'];
-
+			if(isset($data['booked'])&&!empty($data['booked'])){
 			$data['ratio'] = ($data['booked'] / $data['total_flats']) * 100;
-
+}
 
 			$this->load->view('welcome_message', $data);
 		}
@@ -113,14 +117,24 @@ class Main extends MY_Controller
 			$oneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($currentDate)));
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 MONTH)"`;
 			// $data['total'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
+			
+			if($data['total_monthly'] = $this->Db_Model->get_booked_data())
 			$data['total'] = $data['total_monthly'] = $this->Db_Model->get_booked_data()['result'];
-
+			if(empty($data['total'])){
+				$data['total'] = 0;
+			}if(empty($data['total_monthly'])){
+				$data['total_monthly'] = 0;
+			}
 			$where = `'created_at >=', "DATE_SUB(NOW(), INTERVAL 1 YEAR)"`;
 			$data['year'] = $this->Db_Model->get_data(TBL_RENT, $where, '', '', $type = 1, $select = 'sum(amount) as total')[0]['total'];
-
+			if(empty($data['year'])){
+				$data['year'] = 0;
+			}
 			// $data['booked'] = $this->Db_Model->get_data(TBL_RENT, $where = '', '', '', $type = 1, $select = 'DISTINCT(flat_id) as booked')[0]['booked'];
 			$data['booked'] = $this->Db_Model->get_booked_flat_by_user();
-
+			if(empty($data['booked'])){
+				$data['booked'] = 0;
+			}
 			// $query = $this->db->last_query();
 			// echo $query;
 			$where_flats = array(
@@ -128,7 +142,13 @@ class Main extends MY_Controller
 			);
 			// echo json_encode($this->Db_Model->get_booked_flat_by_user($where_flats));
 			// exit;
+			$data['total_flats']=$data['booked_flats'] =0;
+			$data['total_flats_data'] = $this->Db_Model->get_data(TBL_FLAT, $where_flats, '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0];
+			// if(!empty($data['total_flats_data'])){
+			// 	$data['total_flats_data'] = $data['total_flats_data'][0]['total_flats'];
 
+			// }
+			$data['total_flats'] = $this->Db_Model->get_data(TBL_FLAT, $where_flats, '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0]['total_flats'];
 			$data['total_flats'] = $this->Db_Model->get_data(TBL_FLAT, $where_flats, '', '', $type = 1, $select = 'count(flat_id) as total_flats')[0]['total_flats'];
 			$data['booked_flats'] = $data['booked']['result'];
 
@@ -162,7 +182,7 @@ class Main extends MY_Controller
 				echo json_encode($data);
 				exit;
 			} else {
-				echo '0';
+				echo '0';	
 				exit;
 			}
 
@@ -266,10 +286,10 @@ class Main extends MY_Controller
 					'owner_id' => $_POST['owner'], // Hash the password
 					'status' => $_POST['status'], // Hash the password
 				);
-
 				// Save to database using the model
-				if (isset($_POST['flat_id']) && $_POST['flat_id']) {
-					$user_id = $this->Db_Model->update_data(TBL_FLAT, $data, $_POST['flat_id']);
+				if (isset($_POST['flat_id'])&&$_POST['flat_id']!='false') {
+					$where['flat_id']=$_POST['flat_id'];
+					$user_id = $this->Db_Model->update_data(TBL_FLAT, $data, $where);
 					$mesg = 'Updated';
 				} else {
 					$mesg = 'Registered';
@@ -415,11 +435,11 @@ class Main extends MY_Controller
 				$data = array(
 					'tower_name' => $_POST['tower'],
 					'owner_id' => $_POST['owner'] ? $_POST['owner'] : $_SESSION['user_id'],
-					'id' => $_POST['edit_tower_id'] ? $_POST['edit_tower_id'] : '',
+					'id' => (isset($_POST['edit_tower_id'])&&!empty($_POST['edit_tower_id'])) ? $_POST['edit_tower_id'] : '',
 
 				);
 
-				if ($_POST['edit_tower_id']) {
+				if (isset($_POST['edit_tower_id'])&&!empty($_POST['edit_tower_id'])) {
 					// Save to database using the model
 					$user_id = $this->Db_Model->update_data(TBL_TOWER, $data, $where = array('id' => $_POST['edit_tower_id']));
 					print json_encode(['status' => 'success', 'message' => 'Tower Updated successfully', 'data' => $user_id]);
@@ -724,6 +744,29 @@ class Main extends MY_Controller
 		$user_id = $this->Db_Model->update_data(TBL_RENT, $data, $where);
 		$user_id = $this->Db_Model->update_data(TBL_FLAT, $data1, $where);
 		print json_encode(['status' => 'success', 'message' => 'Checked Out Successfully', 'data' => $user_id]);
+		exit;
+	}
+	public function invoice_ajax($tenant_id = '')
+	{
+		$where = array('tenant_id' => $tenant_id ? $tenant_id : $_SESSION['user_id'], 'booked' => 'no');
+
+		$invoice_data = $this->Db_Model->get_data(TBL_RENT, $where, $order_by = null, $limit = null, $type = 0, $select = '*');
+
+		print json_encode(['status' => 'success', 'message' => 'Your Invoices', 'data' => $invoice_data]);
+		exit;
+	}
+	public function pay_invoice_ajax($tenant_id = '')
+	{
+		$where = array(
+			'id' => $_POST['id']
+		);
+		$data = array(
+			'paid' => 'yes'
+		);
+		$user_id = $this->Db_Model->update_data(TBL_RENT, $data, $where);
+
+
+		print json_encode(['status' => 'success', 'message' => 'Thanks For Paying', 'data' => $user_id]);
 		exit;
 	}
 	public function book_flat_ajax()

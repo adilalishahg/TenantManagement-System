@@ -49,7 +49,6 @@ function load_user_dashboard(data) {
 	res += "		</div>";
 	res += "	</div>";
 	res += "</div>";
-	console.log(res);
 	$(".row").html("");
 	$(".row").html(res);
 	// console.log(res_dashboard)
@@ -58,26 +57,26 @@ function load_user_dashboard(data) {
 function load_dashboard(data) {
 	console.log("data");
 	console.log(data);
-	const booked_ratio = " " + data.booked.result + ` /` + data.total_flats + " ";
+	const booked_ratio = " " + data.booked.result||"0" + ` /` + data.total_flats||"0" + " ";
 	var res_dashboard = `<div class="row">`;
 	res_dashboard += card(
 		"primary",
 		"EARNINGS (MONTHLY)",
-		"$" + data.total_monthly,
+		"$" + data.total_monthly?data.total_monthly:"0",
 		"fa-calendar"
 	);
 	res_dashboard += card(
 		"primary",
 		"EARNINGS (Annual)",
-		"$" + data.year,
+		"$" + data.year||"0",
 		"fa-calendar"
 	);
 	res_dashboard += card(
 		"info",
 		"Booked/Total Flats",
-		booked_ratio,
+		booked_ratio||"0",
 		"fa-clipboard-list",
-		data.ratio
+		data.ratio||"0"
 	);
 	res_dashboard += ` </div>`;
 	$(".user_dash").html("");
