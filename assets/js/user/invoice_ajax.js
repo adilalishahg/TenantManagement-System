@@ -25,15 +25,15 @@ function selectFlatPopUp2(
 }
 function handleYes2(id, route) {
 	console.log(id);
-	$.post(route, { id: id }, function (data1, status) {
+	$.post(route, { id: id }, function (data, status) {
 		$(".loader").hide();
-		let data1 = JSON.parse(data);
+		let datas = JSON.parse(data);
 
-		if (data1.status == "error") {
-			showError(data1.errors);
+		if (datas.status == "error") {
+			showError(datas.errors);
 		}
-		if (data1.status == "success") {
-			swal(data1.message + "!", data1.message, "success");
+		if (datas.status == "success") {
+			swal(datas.message + "!", datas.message, "success");
 		}
 	});
 }

@@ -166,6 +166,18 @@ class Db_Model extends CI_Model
 		}
 		return $query->result();
 	}
+	public function getReportResult($st_date, $en_date, $where,$table, $name='*'){
+		$this->db->select($name);
+		$this->db->from($table);
+		if($where){
+
+			$this->db->where($where);
+		}
+		$this->db->where('created_at >=', $st_date);
+		$this->db->where('created_at <=', $en_date);
+		$query = $this->db->get();
+		return $query->result_array();
+	}
 	public function getCurrentUser($tbl, $array = array())
 	{
 		$this->db->select('*');

@@ -14,6 +14,8 @@
         <!-- Custom fonts for this template-->
         <link href=<?php echo base_url("assets/vendor/fontawesome-free/css/all.min.css") ?> rel="stylesheet"
             type="text/css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
         <link
             href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
             rel="stylesheet">
@@ -33,6 +35,7 @@
         <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
 
         <link href=<?php echo base_url("assets/css/custom.css") ?> rel="stylesheet">
+		
         <style>
         .loader {
             border: 8px solid #f3f3f3;

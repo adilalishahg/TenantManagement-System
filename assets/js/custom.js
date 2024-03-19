@@ -201,8 +201,7 @@ function loadModule(val) {
 		checkTimeDifference(loginTime);
 	} else {
 		localStorage.setItem("login_time", Date.now());
-	}
-
+	} 
 	$.get(val, function (data, status) {
 		$(".loader").hide();
 		const headingElement = document.querySelector(
@@ -212,6 +211,7 @@ function loadModule(val) {
 			".h3.mb-0.text-gray-800.user_dashboard"
 		);
 		var data = JSON.parse(data);
+		
 		if (val == "main_ajax") {
 			if (headingElement) {
 				console.log("headingElement");
@@ -227,7 +227,7 @@ function loadModule(val) {
 			headingElement.textContent = "Book Flat";
 			load_flat(data);
 		}else if (val == "reports_ajax") {
-			headingElement.textContent = "Book Flat";
+			headingElement.textContent = "Reports";
 			load_reports(data);
 		} else if (val == "book_tower_ajax") {
 			headingElement.textContent = "Book Tower";
@@ -619,9 +619,12 @@ function testing_invoice_ajax(data){
 	$(".row").html(response);
 
 	// Initialize DataTable after adding the HTML to the DOM
-	$(document).ready(function () {
+	document.addEventListener("DOMContentLoaded", function() {
+		// Code to execute when the DOM is fully loaded
 		$("#dataTable").DataTable();
+	 
 	});
+
 }
 
 function pay_invoice(route, id) {

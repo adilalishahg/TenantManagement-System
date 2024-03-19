@@ -382,6 +382,167 @@ class Main extends MY_Controller
 			// $this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
 		}
 	}
+	public function reports_ajax()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+			// print_r($_POST);
+			if (isset($_POST['del_id'])) {
+
+				$where = array(
+					'user_id' => $_POST['del_id']
+				);
+				// Save to database using the model
+				$employee = $this->Db_Model->delete_data(TBL_USER, $where);
+
+				print json_encode(['status' => 'success', 'message' => 'User Deleted']);
+			}
+			if (isset($_POST['id'])) {
+
+				$where = array(
+					'user_id' => $_POST['id']
+				);
+				// Save to database using the model
+				$employee = $this->Db_Model->get_data(TBL_USER, $where, '', '', $type = 1);
+
+				print json_encode(['status' => 'success', 'data' => $employee[0]]);
+			}
+			if (isset($_POST['edit_id'])) {
+
+				$this->form_validation->set_rules('first_name', 'First Name', 'required');
+				$this->form_validation->set_rules('last_name', 'Last', 'required');
+				$this->form_validation->set_rules('email', 'Email', 'required');
+				$this->form_validation->set_rules('role', 'Role', 'required');
+				$this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+				$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]');
+				if ($this->form_validation->run() === false) {
+					// Form validation failed
+
+					$errors = $this->form_validation->error_array();
+					// print_r($errors);
+					print json_encode(['status' => 'error', 'message' => 'Validation failed', 'errors' => $errors]);
+					return;
+				} else {
+					$where = array(
+						'user_id' => $_POST['edit_id']
+					);
+					$data = array(
+						'first_name' => $_POST['edit_id'],
+						'last_name' => $_POST['last_name'],
+						'email' => $_POST['edit_id'],
+						'contact_no' => $_POST['contact_no'],
+						'plainPassword' => $_POST['password'],
+						'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)
+					);
+					// Save to database using the model
+					$employee = $this->Db_Model->update_data(TBL_USER, $data, $where);
+					$lastQuery = $this->db->last_query();
+
+					// print json_encode(['status' => 'success', 'data' => $employee[0]]);
+					print json_encode(['status' => 'success', 'data' => 'User Updated successfully', 'message' => 'User Updated successfully']);
+				}
+			}
+			exit;
+		} else {
+			echo json_encode(1);exit;
+
+			$where = 'type=2 or type=5';
+			$users = $this->Db_Model->get_data(TBL_USER, $where, '', '', $type = 1);
+			echo json_encode(['users' => $users]);
+			exit;
+			// $this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
+		}
+	}
+	public function tower_report_ajax()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+			// print_r($_POST);
+			if (isset($_POST['del_id'])) {
+
+				$where = array(
+					'user_id' => $_POST['del_id']
+				);
+				// Save to database using the model
+				$employee = $this->Db_Model->delete_data(TBL_USER, $where);
+
+				print json_encode(['status' => 'success', 'message' => 'User Deleted']);
+			}
+			if (isset($_POST['id'])) {
+
+				$where = array(
+					'user_id' => $_POST['id']
+				);
+				// Save to database using the model
+				$employee = $this->Db_Model->get_data(TBL_USER, $where, '', '', $type = 1);
+
+				print json_encode(['status' => 'success', 'data' => $employee[0]]);
+			}
+			if (isset($_POST['edit_id'])) {
+
+				$this->form_validation->set_rules('first_name', 'First Name', 'required');
+				$this->form_validation->set_rules('last_name', 'Last', 'required');
+				$this->form_validation->set_rules('email', 'Email', 'required');
+				$this->form_validation->set_rules('role', 'Role', 'required');
+				$this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+				$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]');
+				if ($this->form_validation->run() === false) {
+					// Form validation failed
+
+					$errors = $this->form_validation->error_array();
+					// print_r($errors);
+					print json_encode(['status' => 'error', 'message' => 'Validation failed', 'errors' => $errors]);
+					return;
+				} else {
+					$where = array(
+						'user_id' => $_POST['edit_id']
+					);
+					$data = array(
+						'first_name' => $_POST['edit_id'],
+						'last_name' => $_POST['last_name'],
+						'email' => $_POST['edit_id'],
+						'contact_no' => $_POST['contact_no'],
+						'plainPassword' => $_POST['password'],
+						'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)
+					);
+					// Save to database using the model
+					$employee = $this->Db_Model->update_data(TBL_USER, $data, $where);
+					$lastQuery = $this->db->last_query();
+
+					// print json_encode(['status' => 'success', 'data' => $employee[0]]);
+					print json_encode(['status' => 'success', 'data' => 'User Updated successfully', 'message' => 'User Updated successfully']);
+				}
+			}
+			exit;
+		} else {
+			$err=$st_date =$en_date =$where ='';
+			$st = $_GET['start_date']?$_GET['start_date']:'';
+			$en = $_GET['end_date']?$_GET['end_date']:'';
+			$name = $_GET['name']? $_GET['name']:'';
+			if(empty($st)){$err.='Please Enter Start Date';}
+			if(empty($en)){$err.='Please Enter End Date';}
+			if(empty($err)){
+					$st_date = date('Y-m-d', strtotime($st));
+					$en_date = date('Y-m-d', strtotime($en));
+			} 
+			if(!empty($name)){
+				$where['tower_name']= $name;
+			}
+			$report = $this->Db_Model->getReportResult($st_date, $en_date, $where,'tbl_tower'); 
+			
+			if(empty($report));
+			echo json_encode(['status'=>0,'errors'=>'no record found']);
+			exit;
+
+			$where = 'type=2 or type=5';
+			$users = $this->Db_Model->get_data(TBL_USER, $where, '', '', $type = 1);
+			echo json_encode(['users' => $users]);
+			exit;
+			// $this->load->view('flat/book_flat', ['users' => $users, 'towers' => $tower]);
+		}
+	}
 	public function book_tower()
 	{
 

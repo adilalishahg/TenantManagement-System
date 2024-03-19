@@ -23,6 +23,7 @@ $(document).ready(function() {
     $('#dataTable').DataTable({
         select: true
     });
+	$('.datepicker').datepicker();
 });
 // $('#dataTable').DataTable({
 // 	select: true
@@ -36,10 +37,14 @@ $(document).ready(function() {
 <script src=<?php echo base_url("assets/js/dash_board.js") ?>></script>
 <script src=<?php echo base_url("assets/js/flat.js") ?>></script>
 <script src=<?php echo base_url("assets/js/tower.js") ?>></script>
+<script src=<?php echo base_url("assets/js/reports.js") ?>></script>
 
 
 <script src=<?php echo base_url("assets/vendor/jquery/jquery.min.js") ?>></script>
 <script src=<?php echo base_url("assets/vendor/bootstrap/js/bootstrap.bundle.min.js") ?>></script>
+<!-- Include Bootstrap Datepicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
 
 <!-- Core plugin JavaScript-->
 <script src=<?php echo base_url("assets/vendor/jquery-easing/jquery.easing.min.js") ?>></script>
