@@ -191,6 +191,40 @@ function checkTimeDifference(time) {
 		localStorage.setItem("login_time", Date.now());
 	}
 }
+function getDateDifference(dateString1, dateString2) {
+    // Parse the date strings into Date objects
+    const date1 = new Date(dateString1);
+    const date2 = new Date(dateString2);
+
+    // Calculate the difference in milliseconds
+    const differenceMs = Math.abs(date2 - date1);
+
+    // Convert milliseconds to days, hours, minutes, and seconds
+    const days = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((differenceMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((differenceMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((differenceMs % (1000 * 60)) / 1000);
+
+    return {
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+    };
+}
+function getCurrentMonthDays() {
+    // Get current date
+    const currentDate = new Date();
+
+    // Get the year and month
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // Month is zero-indexed, so add 1
+
+    // Calculate the number of days in the month
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    return daysInMonth;
+}
 function loadModule(val) {
 	remove_empty_message_classes();
 	$(".loader").show();
@@ -557,9 +591,10 @@ function testing_invoice_ajax(data){
 		// owner_options +=
 		// 	`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
 		// var role_user = user.type == "A" ? "Luxuary" : "Normal";
-		let pay_status = user.paid=='yes' ? "<span class='bg-warning text-danger px-5 py-2 rounded  text-primary font-weight-bolder m-1 '>Paid</span>" : `<a class='btn btn-info rounded m-1 px-5'  onclick="return pay_invoice('pay_invoice_ajax',` +
-		user.id +
-		`)">Pay</a>`;
+		let pay_status = user.paid=='yes' ? "<span class='bg-info text-danger px-5 py-2 rounded  text-primary font-weight-bolder m-1 '>Paid</span>" : `<span class='bg-warning text-danger px-5 py-2 rounded  text-primary font-weight-bolder m-1 '>Pending</span>`;
+		// let pay_status = user.paid=='yes' ? "<span class='bg-warning text-danger px-5 py-2 rounded  text-primary font-weight-bolder m-1 '>Paid</span>" : `<a class='btn btn-info rounded m-1 px-5'  onclick="return pay_invoice('pay_invoice_ajax',` +
+		// user.id +
+		// `)">Pay</a>`;
  		rows +=
 			`<tr>` +
 			`<td>` +
@@ -652,4 +687,43 @@ function selectFlatPopUp2(
 		handleYes = "handleYesN('" + id + "','" + route + "','invoiceModel','" + load_module + "')"
 	)
 	 
+}
+function selectUserRole(id){
+	switch (id) {
+		case 1:
+			return "Admin";
+			break;
+		case 2:
+			return "Manager";
+			break;
+		case 3:
+			return "Customer";
+			break;
+		case 4:
+			return "Manager";
+			break;
+		case 5:
+			return "Employee";
+			break;
+	
+		default:
+			return "Customer";
+			break;
+	}
+}
+function checkout(id) {
+	$(".loader").show();
+	$.get("checkout_ajax", { id: id }, function (data, status) {
+		$(".loader").hide();
+		let data1 = JSON.parse(data);
+		console.log(data1);
+		if (data1.status == "error") {
+			showError(data1.errors);
+		}
+		if (data1.status == "success") {
+			swal(data1.message + "!", data1.message, "success");
+		}
+		// $(".user_dash").html("");
+		get_towers_ajax(data1);
+	});
 }

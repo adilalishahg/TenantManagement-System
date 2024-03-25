@@ -11,12 +11,13 @@ function load_user_dashboard(data) {
 
 	if (Array.isArray(flats)) {
 		flats.forEach((element) => {
+			
+			let timeDiff = getDateDifference(element.created_at, element.updated_at)
+			if(isNaN(timeDiff.days)||timeDiff.days=='NaN'){timeDiff.days=0}
 			let button_or_message =
 				element.booked == "no"
-					? "<span class=' badge badge-secondary'><h4>You are already <br/> Checked Out</h4></span>"
-					: `<button class="btn btn-danger rounded-2 " onclick="checkout('` +
-					  element.flat_id +
-					  `')">CheckOut <i class="fas fa-sign-out-alt fa-1x fa-fw mr-2 text-gray-400"></i></button>`; ////
+					? "<span class=' badge badge-Info'><h4>You are already <br/> Checked Out</h4></span>"
+					: `<span class=' badge badge-Primary'><h4>Rent Pending </span>`; ////
 			let flat_type = element.type == "A" ? "5 Star Room" : "Classic Room";
 			res += '<div class="   col-lg-6 mb-4" id="' + element.flat_id + '">';
 			res += '<div class="card border-left-warning shadow h-100 py-2">';
@@ -35,7 +36,7 @@ function load_user_dashboard(data) {
 				'<div class="h5 mb-0 font-weight-bold text-gray-800"> Flat : ' +
 				flat_type;
 			res += "<br />This Month Passed Days :  " + element.passedDays;
-			res += "<br />Your Spent Days : " + element.spentDays;
+			res += "<br />Your Spent Days : " + timeDiff.days;
 			res += "<br />This Month Pending Days : " + element.pendingDays;
 			res += "</div>";
 			res += "</div>";
@@ -83,19 +84,4 @@ function load_dashboard(data) {
 	$(".user_dash").html(res_dashboard);
 	// console.log(res_dashboard)
 }
-function checkout(id) {
-	$(".loader").show();
-	$.get("checkout_ajax", { id: id }, function (data, status) {
-		$(".loader").hide();
-		let data1 = JSON.parse(data);
-		console.log(data1);
-		if (data1.status == "error") {
-			showError(data1.errors);
-		}
-		if (data1.status == "success") {
-			swal(data1.message + "!", data1.message, "success");
-		}
-		// $(".user_dash").html("");
-		get_towers_ajax(data1);
-	});
-}
+

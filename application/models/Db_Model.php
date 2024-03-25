@@ -115,7 +115,7 @@ class Db_Model extends CI_Model
 		$result = ($get->result_array());
 		return $result;
 	}
-	public function get_all_flat_and_tower()
+	public function get_all_flat_and_tower($where='')
 	{
 		$this->db->select(TBL_TOWER . '.tower_name,' . TBL_FLAT . '.*');
 		// $this->db->select('COUNT(monthly_rent.id) as booked');
@@ -125,6 +125,10 @@ class Db_Model extends CI_Model
 		$this->db->join(TBL_TOWER, TBL_FLAT . '.tower_id = ' . TBL_TOWER . '.id', 'left');
 		// $this->db->where('tbl_flats.owner_id', 27);
 		// print_r($_SESSION);
+		if($where){
+
+			$this->db->where($where);
+		}
 		// if ($_SESSION['role'] != '1') {
 
 		// 	$this->db->where(TBL_FLAT . '.owner_id', $_SESSION['user_id']);
@@ -166,17 +170,92 @@ class Db_Model extends CI_Model
 		}
 		return $query->result();
 	}
-	public function getReportResult($st_date, $en_date, $where,$table, $name='*'){
-		$this->db->select($name);
+	public function getTowerReport($st_date, $en_date, $where=[],$table){
+		$this->db->select($table.'.created_at,'.$table.'.tower_name,'.$table.'.id,'); 
+		$this->db->select(TBL_USER.'.username,'.TBL_USER.'.first_name,'.TBL_USER.'.last_name,'.TBL_USER.'.email'); 
 		$this->db->from($table);
 		if($where){
-
-			$this->db->where($where);
+			$this->db->group_start(); // Start grouping
+			foreach ($where as $key => $value) {
+				$this->db->or_like($key, $value);
+			}
+			$this->db->group_end(); // End grouping
 		}
-		$this->db->where('created_at >=', $st_date);
-		$this->db->where('created_at <=', $en_date);
+		
+		$this->db->join(TBL_USER, TBL_USER . '.user_id = ' . $table . '.owner_id', 'left');
+		$this->db->where($table.'.created_at >=', $st_date);
+		$this->db->where($table.'.created_at <=', $en_date);
 		$query = $this->db->get();
-		return $query->result_array();
+
+		  return 	$query->result_array();
+		//  echo $query = $this->db->last_query();exit;
+
+	}
+	public function getRentReport($st_date, $en_date, $where=[],$table){
+		$this->db->select($table.'.*,'); 
+		$this->db->select(TBL_FLAT.'.flat_name,'.TBL_FLAT.'.type as flat_type,'.TBL_FLAT.'.status as book_status,'); 
+		$this->db->select(TBL_TOWER.'.tower_name,'); 
+		$this->db->select(TBL_USER.'.first_name,'.TBL_USER.'.last_name,'.TBL_USER.'.username'); 
+		$this->db->from($table);
+		if($where){
+			$this->db->group_start(); // Start grouping
+			foreach ($where as $key => $value) {
+				$this->db->or_like($key, $value);
+			}
+			$this->db->group_end(); // End grouping
+		}
+		
+		$this->db->join(TBL_USER, TBL_USER . '.user_id = ' . $table . '.tenant_id', 'left');
+		$this->db->join(TBL_FLAT, TBL_FLAT . '.flat_id = ' . $table . '.flat_id', 'left');
+		$this->db->join(TBL_TOWER, TBL_TOWER . '.id = ' . TBL_FLAT . '.tower_id', 'left');
+		$this->db->where($table.'.created_at >=', $st_date);
+		$this->db->where($table.'.created_at <=', $en_date);
+		$query = $this->db->get();
+
+		  return 	$query->result_array();
+		//  echo $query = $this->db->last_query();exit;
+
+	}
+	public function getFlatsReport($st_date, $en_date, $where=[],$table){
+		$this->db->select($table.'.*,'); 
+		$this->db->select(TBL_USER.'.username,'.TBL_USER.'.first_name,'.TBL_USER.'.last_name,'.TBL_USER.'.email'); 
+		$this->db->from($table);
+		if($where){
+			$this->db->group_start(); // Start grouping
+			foreach ($where as $key => $value) {
+				$this->db->or_like($key, $value);
+			}
+			$this->db->group_end(); // End grouping
+		}
+		
+		$this->db->join(TBL_USER, TBL_USER . '.user_id = ' . $table . '.owner_id', 'left');
+		$this->db->where($table.'.created_at >=', $st_date);
+		$this->db->where($table.'.created_at <=', $en_date);
+		$query = $this->db->get();
+
+		  return 	$query->result_array();
+		//  echo $query = $this->db->last_query();exit;
+
+	}
+	public function get_tower_revenue($where_flat='*',$table,$id,$type='tower'){
+		$this->db->select($where_flat);
+		$this->db->from($table);
+		$this->db->join(TBL_FLAT, 'tbl_flats.flat_id = monthly_rent.flat_id', 'left');
+		if($type=='tower'){
+			$this->db->where('tbl_flats.tower_id', $id);
+		}if($type=='flat'){
+			$this->db->where('tbl_flats.flat_id', $id);
+
+		}
+ 
+		$query = $this->db->get();
+		$totalAmount =0;
+		if ($query->num_rows() > 0) {
+			$result = $query->row();
+			$totalAmount = $result->total_amount; 
+		} 
+		return $totalAmount;
+		//  echo $query = $this->db->last_query();exit;
 	}
 	public function getCurrentUser($tbl, $array = array())
 	{
