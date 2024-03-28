@@ -117,12 +117,13 @@ class Db_Model extends CI_Model
 	}
 	public function get_all_flat_and_tower($where='')
 	{
-		$this->db->select(TBL_TOWER . '.tower_name,' . TBL_FLAT . '.*');
+		$this->db->select(TBL_TOWER . '.tower_name,' . TBL_FLAT . '.*,' . TBL_USER . '.*');
 		// $this->db->select('COUNT(monthly_rent.id) as booked');
 		$this->db->from(TBL_FLAT);
 		// $this->db->from('monthly_rent');
 		// $this->db->join('tbl_flats', 'tbl_flats.flat_id = monthly_rent.flat_id', 'left');
 		$this->db->join(TBL_TOWER, TBL_FLAT . '.tower_id = ' . TBL_TOWER . '.id', 'left');
+		$this->db->join(TBL_USER, TBL_FLAT . '.owner_id = ' . TBL_USER . '.user_id', 'left');
 		// $this->db->where('tbl_flats.owner_id', 27);
 		// print_r($_SESSION);
 		if($where){

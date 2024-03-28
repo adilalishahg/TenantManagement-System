@@ -5,7 +5,7 @@ function book_flat_ajax(data) {
 	var response = "";
 	if (Array.isArray(flats)) {
 		flats.forEach((element) => {
-			// console.log(element);
+			console.log(element);
 			flat_stat = "Normal";
 			book_stat = "Available";
 			if (element.type === "A") {
@@ -16,10 +16,10 @@ function book_flat_ajax(data) {
 			}
 			response +=
 				`
-						<div class="col-xl-4 col-md-6 mb-4 " id="flat_` +
+						<div class="col-xl-4 col-md-6 mb-4 cursor-pointer" id="flat_` +
 				element.flat_id +
-				`">
-                            <div class="card border-left-primary shadow h-100 py-4">
+				`" onclick=view_flat_detail(`+element.flat_id+`,`+element.rent+`,'`+flat_stat+`',`+current_user+`)>
+                            <div class="card border-left-primary shadow h-100 py-4  custom-border-animation">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
@@ -37,23 +37,7 @@ function book_flat_ajax(data) {
                                         </div>
                                         <div class="col-auto" data-toggle="tooltip" data-placement="top" title="" data-original-title="Book Now">
                                             <!-- -->
-                                            <button id="flat_5" onclick = "selectFlatPopUp('` +
-				element.flat_id +
-				`','` +
-				flat_stat +
-				`','` +
-				element.rent +
-				`','` +
-				current_user +
-				`')" type="button" class="select-flat flat btn btn-primary btn-sm rounded-circle tooltip-content" data-toggle="modal" data-name="` +
-				flat_stat +
-				` Flat" data-price="` +
-				element.rent +
-				`" data-user="` +
-				current_user +
-				`">
-                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                            </button>
+                                            
                                             <!-- <i class="fa-brands fa-flickr"></i> -->
                                         </div>
                                     </div>
@@ -266,6 +250,7 @@ function get_all_flats_ajax(data) {
 		// owner_options +=
 		// 	`<option value="${user.user_id}">${user.first_name} ${user.last_name} </option>`
 		var role_user = user.type == "A" ? "Luxuary" : "Normal";
+		var owner = user.username == "" ? user.first_name+' '+user.last_name :  user.username;
 		var status = user.status == 1 ? "Vacant" : "Booked";
 		console.log(role_user);
 		rows +=
@@ -288,6 +273,9 @@ function get_all_flats_ajax(data) {
 			`<td>` +
 			user.tower_name +
 			`</td> ` +
+			`<td>` +
+			owner +
+			`</td> ` +
 			`<td><a class='btn btn-info'  onclick="return edit_flat('edit_flat_ajax',` +
 			user.flat_id +
 			`)">Edit</a> <a class='btn btn-danger'  onclick="delete_flat(` +
@@ -295,8 +283,7 @@ function get_all_flats_ajax(data) {
 			`)">Delete</a></td> ` +
 			`</tr>`;
 		// console.log(user)
-	});
-	console.log(rows);
+	}); 
 	var response =
 		`<div class="card shadow mb-4">
                         <div class="card-header py-3">
@@ -313,6 +300,7 @@ function get_all_flats_ajax(data) {
                                             <th>Status</th>
                                             <th>Flat Type</th>
                                             <th>Tower</th>
+                                            <th>Owner Name</th>
                                             <th>option</th>
                                              
                                         </tr>
@@ -325,6 +313,7 @@ function get_all_flats_ajax(data) {
                                             <th>Status</th>
                                             <th>Flat Type</th>
                                             <th>Tower</th>
+                                            <th>Owner Name</th>
                                             <th>option</th>
                                              
                                         </tr>
@@ -348,20 +337,6 @@ function get_all_flats_ajax(data) {
 	$(document).ready(function () {
 		$("#dataTable").DataTable();
 	});
-}
-function selectFlatPopUp(id, status, rent, user) {
-	var flatName = $("flat_" + id).data("name");
-	var selectedFlatFromPopUp = id;
-	var price = $(this).attr("data-price");
-	$("#booking_id").val(selectedFlatFromPopUp);
-	$("#booker_name").val(user);
-	// Set the modal content dynamically
-	$("#flatmodalContent").text(
-		"Do You want to book flat: " + status + " of rent :" + rent
-	);
-
-	// Show the modal
-	$("#flatModal").modal("show");
 }
 
 function load_flat(data, value = "") {
@@ -532,4 +507,97 @@ function delete_flat(id) {
 		// $(".user_dash").html("");
 		get_flats_ajax(data1);
 	});
+}
+// function view_flat_detail(element.flat_id,element.rent,element.flat_stat,current_user) 
+function view_flat_detail(flat_id,rent,flat_stat,current_user) {
+	// $(".loader").show(); 
+	$('#exampleModalLabelDynamic').text('test'); // Change modal title
+const button = `<button id="flat_5" onclick = "selectFlatPopUp('` +
+flat_id +
+`','` +
+flat_stat +
+`','` +
+rent +
+`','` +
+current_user +
+`')" type="button" class="select-flat flat btn btn-primary btn-sm rounded-circle tooltip-content" data-toggle="modal" data-name="` +
+flat_stat +
+` Flat" data-price="` +
+rent +
+`" data-user="` +
+current_user +
+`">
+								<i class="fas fa-calendar fa-2x text-gray-300"></i>
+							</button>`
+							selectFlatPopUp(flat_id, flat_stat, rent, current_user)
+  // Set the content of the modal dynamically
+//   $('#exampleModal').find('.modal-body').html(button);
+  
+  // Trigger the modal to show
+//   $('#exampleModal').modal('show');
+}
+
+function selectFlatPopUp(id, status, rent, user) {
+	
+	$('#exampleModal').modal('hide');
+	var flatName = $("flat_" + id).data("name");
+	var selectedFlatFromPopUp = id;
+	var price = $(this).attr("data-price");
+	$("#booking_id").val(selectedFlatFromPopUp);
+	$("#booker_name").val(user);
+	// Set the modal content dynamically
+	$("#flatmodalContent").text(
+		"Do You want to book flat: " + status + " of rent :" + rent
+	);
+
+	// Show the modal
+	$("#flatModal").modal("show");
+}
+
+
+$('#flatBookButton').on('click', function() {
+    // Add your custom function logic here
+    console.log('Logout button clicked for element with ID:', $('#booking_id').val());
+    var booking_id = $('#booking_id').val();
+    var userName = $('#booker_name').val();
+    // Close the modal	
+    bookFlat(booking_id, userName)
+    // $('#flatModal').modal('hide');
+});
+
+function bookFlat(booking_id, userName) {
+    $('#flatModal').modal('hide');
+
+    var formData = {
+        flatId: booking_id,
+        userId: userName,
+    }
+    $.ajax({
+        type: 'POST',
+        url: ajaxUrl + 'register_flat',
+        data: formData,
+        success: function(response) {
+            // Handle successful submission (you can redirect or show a success message)
+            swal("Flat Registered!", "Flat Registered Successfully!", "success");
+            loadModule('book_flat_ajax')
+
+        },
+        error: function(xhr, status, error) {
+
+
+            swal("Oops!", "Something went wrong", "error");
+
+
+
+            var errors = JSON.parse(xhr.responseText);
+
+            $('.error-message').html('');
+
+            // Display errors for each field
+            $.each(errors, function(key, value) {
+                $('#' + key).next('.error-message').html(
+                    '<span class="text-danger">' + value + '</span>');
+            });
+        }
+    });
 }

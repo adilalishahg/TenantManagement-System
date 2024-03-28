@@ -199,27 +199,6 @@
     </div> -->
 </ul>
 
-<div class="modal fade" id="flatModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Book This Flat</h5>
-                <input type='hidden' name='booking_id' id='booking_id'>
-                <input type='hidden' name='booker_name' id='booker_name'>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <!-- Use a placeholder element to dynamically set the modal content -->
-            <div class="modal-body" id="flatmodalContent"></div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" id="flatBookButton" href="#">Book</a>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
 var ajaxUrl = '<?php echo AURL; ?>';
 // Show loader when an AJAX request starts
@@ -243,53 +222,6 @@ $(document).ready(function() {
 
 
 
-
-$('#flatBookButton').on('click', function() {
-    // Add your custom function logic here
-    console.log('Logout button clicked for element with ID:', $('#booking_id').val());
-    var booking_id = $('#booking_id').val();
-    var userName = $('#booker_name').val();
-    // Close the modal	
-    bookFlat(booking_id, userName)
-    // $('#flatModal').modal('hide');
-});
-
-function bookFlat(booking_id, userName) {
-    $('#flatModal').modal('hide');
-
-    var formData = {
-        flatId: booking_id,
-        userId: userName,
-    }
-    $.ajax({
-        type: 'POST',
-        url: ajaxUrl + 'register_flat',
-        data: formData,
-        success: function(response) {
-            // Handle successful submission (you can redirect or show a success message)
-            swal("Flat Registered!", "Flat Registered Successfully!", "success");
-            loadModule('book_flat_ajax')
-
-        },
-        error: function(xhr, status, error) {
-
-
-            swal("Oops!", "Something went wrong", "error");
-
-
-
-            var errors = JSON.parse(xhr.responseText);
-
-            $('.error-message').html('');
-
-            // Display errors for each field
-            $.each(errors, function(key, value) {
-                $('#' + key).next('.error-message').html(
-                    '<span class="text-danger">' + value + '</span>');
-            });
-        }
-    });
-}
 // $('.select-flat').on('click', function() {
 
 //     // Use the 'this' keyword to reference the clicked element

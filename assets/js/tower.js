@@ -85,6 +85,7 @@ function get_towers_ajax(data) {
 	console.log(row);
 	let rows = "";
 	row.forEach((user, index) => {
+		let id = user.id||user.tower_id
 		rows +=
 			`<tr>` +
 			`<td>` +
@@ -94,9 +95,9 @@ function get_towers_ajax(data) {
 			user.tower_name +
 			`</td> ` +
 			`<td><a class='btn btn-info'  onclick="return edit_tower_ajax('edit_tower_ajax',` +
-			user.id +
+			id +
 			`)">Edit</a> <a class='btn btn-danger'  onclick="delete_tower(` +
-			user.id +
+			id +
 			`)">Delete</a></td> ` +
 			`</tr>`;
 		// console.log(user)
@@ -219,7 +220,7 @@ function tower_html(data = "", user = "") {
 		</div>`;
 	response += `</div> `;
 	return response;
-}
+} 
 function delete_tower(id) {
 	$(".loader").show();
 	$.post("delete_tower_ajax", { del_id: id }, function (data, status) {

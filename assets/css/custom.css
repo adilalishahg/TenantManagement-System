@@ -46,3 +46,19 @@ input {
 	color: #000 !important;
 	font-size: 0.9rem !important;
 }
+.cursor-pointer {
+	cursor: pointer;
+  }
+  .custom-border-animation {
+	transition: border-color 0.5s ease;
+	 
+  }
+  .custom-border-animation:hover {
+	border-color: red; /* Change border color on hover */
+	border: 1px solid red; /* Change border color on hover */
+	transform: scale(0.9); /* Increase size on hover */
+
+  }
+  .custom-border-animation:hover::before {
+	transform: rotate(360deg);
+  }

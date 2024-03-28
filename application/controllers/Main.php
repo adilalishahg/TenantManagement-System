@@ -480,6 +480,11 @@ class Main extends MY_Controller
 				 
 			}
 			if($type=='rent_report'){
+				$where[TBL_USER.'.username']= $name;
+				$where[TBL_USER.'.first_name']= $name;
+				$where[TBL_USER.'.last_name']= $name;
+				$where[TBL_FLAT.'.flat_name']= $name;
+				$where[TBL_TOWER.'.tower_name']= $name;
 				 
 				$report = $this->Db_Model->getRentReport($st_date, $en_date, $where,TBL_RENT); 
 				 
@@ -791,8 +796,12 @@ class Main extends MY_Controller
 		} else {
 
 			// $where = 'owner_id=' . $_SESSION['user_id'];
-			// $data['flats'] = $this->Db_Model->get_all_flat_and_tower();
-			$data['towers'] = $this->Db_Model->get_data(TBL_TOWER, $where = '', '', '', $type = 1);
+			$data['towers'] = $this->Db_Model->get_all_flat_and_tower();
+			// $data['towers'] = $this->Db_Model->get_data(TBL_TOWER, $where = '', '', '', $type = 1);
+			 
+			// foreach ($data['towers'] as $key => &$value) {
+				 
+			// }
 			$data['current_user'] = $_SESSION['user_id'];
 			print json_encode(['status' => 'success', 'message' => 'All Flats', 'data' => $data]);
 			exit;
